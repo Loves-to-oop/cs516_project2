@@ -114,7 +114,7 @@ int main( int argc, char* argv[] ) {
 			printSorted = true;
 	}
 	// get the random numbers
-	array = randNumArray( size, seed );
+	array = makeRandArray( size, seed );
 
 	cudaEvent_t startTotal, stopTotal; float timeTotal; cudaEventCreate(&startTotal); cudaEventCreate(&stopTotal); cudaEventRecord( startTotal, 0 );
 

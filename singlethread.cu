@@ -3,6 +3,9 @@
 #include <sstream>
 #include <fstream>
 #include <string>
+#include <thrust/host_vector.h>
+#include <thrust/device_vector.h>
+#include <thrust/sort.h>
 using namespace std;
 
 inline void __cudaSafeCall( cudaError err,
@@ -13,25 +16,25 @@ inline void __cudaSafeCall( cudaError err,
 #pragma warning( push )
 #pragma warning( disable: 4127 ) // Prevent warning on do-while(0);
 	do
-{
-	if ( cudaSuccess != err )
 	{
+		if ( cudaSuccess != err )
+		{
 
-		fprintf( stderr,
-				"cudaSafeCall() failed at %s:%i : %s\n",
-				file, line, cudaGetErrorString( err ) );
-		exit( -1 );
+			fprintf( stderr,
+					"cudaSafeCall() failed at %s:%i : %s\n",
+					file, line, cudaGetErrorString( err ) );
+			exit( -1 );
 
-	}
-} while ( 0 );
+		}
+	} while ( 0 );
 
 
 
 #pragma warning( pop ) 
 #endif
-// CUDA_CHECK_ERROR
+	// CUDA_CHECK_ERROR
 
-return;
+	return;
 }//end function
 
 inline void __cudaCheckError( const char *file, const int line ) {
@@ -75,6 +78,60 @@ inline void __cudaCheckError( const char *file, const int line ) {
 
 }
 
+void bubble_sort(int * array, int size)
+{
+
+
+	for(int i = 0; i <= size - 1; i ++)
+	{
+
+		for(int j = 1; j <= size - 1; j ++)
+		{
+
+
+			if(array[j] <  array[j - 1])
+			{
+
+printf("%d %d\n", array[j - 1], array[j]);
+
+				int c = array[j - 1];
+
+				array[j - 1] = array[j];
+
+				array[j] = c;
+
+printf("%d %d\n\n", array[j - 1], array[j]);
+
+			}//end if
+
+
+
+
+		}//end for j
+
+	}//end for i
+
+
+}//end function
+
+void print_array(int * array, int size)
+{
+
+
+
+	for(int i = 0; i <= size - 1; i ++)
+	{
+
+		printf("%d, ", array[i]);
+
+	}//end for i
+
+	printf("\n");
+
+
+
+}//end function
+
 
 int * makeRandArray( const int size, const int seed ) {
 	srand( seed );
@@ -109,16 +166,18 @@ int main( int argc, char* argv[] ) {
 		std::stringstream ss1( argv[2] ); 
 		ss1 >> seed; }
 	/*
-	{
-		int sortPrint;
-		std::stringstream ss1( argv[2] ); 
-		ss1 >> sortPrint;
-		if( sortPrint == 1 )
-			printSorted = true;
-	}
-	*/
+	   {
+	   int sortPrint;
+	   std::stringstream ss1( argv[2] ); 
+	   ss1 >> sortPrint;
+	   if( sortPrint == 1 )
+	   printSorted = true;
+	   }
+	 */
 	// get the random numbers
 	array = makeRandArray( size, seed );
+
+	print_array(array, size);
 
 	cudaEvent_t startTotal, stopTotal; float timeTotal; cudaEventCreate(&startTotal); cudaEventCreate(&stopTotal); cudaEventRecord( startTotal, 0 );
 
@@ -126,6 +185,7 @@ int main( int argc, char* argv[] ) {
 	///////////////////////  YOUR CODE HERE       ///////////////////////
 	/////////////////////////////////////////////////////////////////////
 
+	bubble_sort(array, size);
 
 	/***********************************
 	 *
@@ -141,7 +201,19 @@ int main( int argc, char* argv[] ) {
 	 **********************************/
 	std::cerr << "Total time in seconds: "
 		<< timeTotal / 1000.0 << std::endl;
+	printSorted = true;
+
 	if( printSorted ){
+
+
+		for(int i = 0; i <= size - 1; i ++)
+		{
+
+			printf("%d, ", array[i]);
+
+		}//end for i
+
+		printf("\n");
 
 		///////////////////////////////////////////////
 		/// Your code to print the sorted array here //

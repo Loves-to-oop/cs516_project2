@@ -1,2 +1,3 @@
 all:
-	nvcc template2.cu -o template
+	nvcc template.cu -o template
+	nvcc thrust.cu -o thrust

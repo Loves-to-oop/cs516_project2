@@ -3,6 +3,9 @@
 #include <sstream>
 #include <fstream>
 #include <string>
+#include <thrust/host_vector.h>
+#include <thrust/device_vector.h>
+#include <thrust/sort.h>
 using namespace std;
 
 inline void __cudaSafeCall( cudaError err,
@@ -13,25 +16,25 @@ inline void __cudaSafeCall( cudaError err,
 #pragma warning( push )
 #pragma warning( disable: 4127 ) // Prevent warning on do-while(0);
 	do
-{
-	if ( cudaSuccess != err )
 	{
+		if ( cudaSuccess != err )
+		{
 
-		fprintf( stderr,
-				"cudaSafeCall() failed at %s:%i : %s\n",
-				file, line, cudaGetErrorString( err ) );
-		exit( -1 );
+			fprintf( stderr,
+					"cudaSafeCall() failed at %s:%i : %s\n",
+					file, line, cudaGetErrorString( err ) );
+			exit( -1 );
 
-	}
-} while ( 0 );
+		}
+	} while ( 0 );
 
 
 
 #pragma warning( pop ) 
 #endif
-// CUDA_CHECK_ERROR
+	// CUDA_CHECK_ERROR
 
-return;
+	return;
 }//end function
 
 inline void __cudaCheckError( const char *file, const int line ) {
@@ -95,7 +98,7 @@ int main( int argc, char* argv[] ) {
 	// and the seed for generating
 	// random numbers
 	// check the command line args
-	if( argc < 4 ){
+	if( argc < 3 ){
 		std::cerr << "usage: "
 			<< argv[0]
 			<< " [amount of random nums to generate] [seed value for rand]" << " [1 to print sorted array, 0 otherwise]"
@@ -108,13 +111,15 @@ int main( int argc, char* argv[] ) {
 	} {
 		std::stringstream ss1( argv[2] ); 
 		ss1 >> seed; }
-	{
-		int sortPrint;
-		std::stringstream ss1( argv[2] ); 
-		ss1 >> sortPrint;
-		if( sortPrint == 1 )
-			printSorted = true;
-	}
+	/*
+	   {
+	   int sortPrint;
+	   std::stringstream ss1( argv[2] ); 
+	   ss1 >> sortPrint;
+	   if( sortPrint == 1 )
+	   printSorted = true;
+	   }
+	 */
 	// get the random numbers
 	array = makeRandArray( size, seed );
 
@@ -123,6 +128,12 @@ int main( int argc, char* argv[] ) {
 	/////////////////////////////////////////////////////////////////////
 	///////////////////////  YOUR CODE HERE       ///////////////////////
 	/////////////////////////////////////////////////////////////////////
+
+	// bl bf switch between buffers
+	// tabe filename create new tab tabn (tab next) tabp (tab previous)
+
+	thrust::sort(array, array + size);
+
 
 	/***********************************
 	 *
@@ -138,7 +149,22 @@ int main( int argc, char* argv[] ) {
 	 **********************************/
 	std::cerr << "Total time in seconds: "
 		<< timeTotal / 1000.0 << std::endl;
+	
+	
+	printSorted = true;
+	
 	if( printSorted ){
+
+
+for(int i = 0; i <= size - 1; i ++)
+{
+
+	printf("%d, ", array[i]);
+
+
+}//end for i
+
+std::cout << "\n";
 
 		///////////////////////////////////////////////
 		/// Your code to print the sorted array here //

@@ -7,6 +7,8 @@ using namespace std;
 
 inline void __cudaSafeCall( cudaError err,
 		const char *file, const int line ) 
+
+{
 #ifdef CUDA_CHECK_ERROR
 #pragma warning( push )
 #pragma warning( disable: 4127 ) // Prevent warning on do-while(0);
@@ -30,7 +32,7 @@ inline void __cudaSafeCall( cudaError err,
 // CUDA_CHECK_ERROR
 
 return;
-
+}//end function
 
 inline void __cudaCheckError( const char *file, const int line ) {
 #ifdef CUDA_CHECK_ERROR
@@ -83,7 +85,7 @@ int * makeRandArray( const int size, const int seed ) {
 	return array; }
 
 
-	__global__ void matavgKernel( ... ) {
+	__global__ void matavgKernel( ) {
 	}
 
 int main( int argc, char* argv[] ) {
@@ -93,7 +95,7 @@ int main( int argc, char* argv[] ) {
 	// and the seed for generating
 	// random numbers
 	// check the command line args
-	if( argc < 4 ){
+	if( argc < 3 ){
 		std::cerr << "usage: "
 			<< argv[0]
 			<< " [amount of random nums to generate] [seed value for rand]" << " [1 to print sorted array, 0 otherwise]"
@@ -106,6 +108,7 @@ int main( int argc, char* argv[] ) {
 	} {
 		std::stringstream ss1( argv[2] ); 
 		ss1 >> seed; }
+	/*
 	{
 		int sortPrint;
 		std::stringstream ss1( argv[2] ); 
@@ -113,6 +116,7 @@ int main( int argc, char* argv[] ) {
 		if( sortPrint == 1 )
 			printSorted = true;
 	}
+	*/
 	// get the random numbers
 	array = makeRandArray( size, seed );
 

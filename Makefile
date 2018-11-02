@@ -1,2 +1,2 @@
 all:
-	nvcc template.cu -o template
+	nvcc template2.cu -o template

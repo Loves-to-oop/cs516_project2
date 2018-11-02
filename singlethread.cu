@@ -6,6 +6,11 @@
 #include <thrust/host_vector.h>
 #include <thrust/device_vector.h>
 #include <thrust/sort.h>
+#include <curand.h>
+#include <curand_kernel.h>
+#include <cuda.h>
+
+
 using namespace std;
 
 inline void __cudaSafeCall( cudaError err,
@@ -92,7 +97,7 @@ void bubble_sort(int * array, int size)
 			if(array[j] <  array[j - 1])
 			{
 
-printf("%d %d\n", array[j - 1], array[j]);
+//printf("%d %d\n", array[j - 1], array[j]);
 
 				int c = array[j - 1];
 
@@ -100,7 +105,7 @@ printf("%d %d\n", array[j - 1], array[j]);
 
 				array[j] = c;
 
-printf("%d %d\n\n", array[j - 1], array[j]);
+//printf("%d %d\n\n", array[j - 1], array[j]);
 
 			}//end if
 
@@ -142,7 +147,47 @@ int * makeRandArray( const int size, const int seed ) {
 	return array; }
 
 
-	__global__ void matavgKernel( ) {
+/*
+
+   Kernel is fuction to run on GPU.
+
+   */
+
+	__global__ void matavgKernel(int * array, int size ) {
+
+
+	for(int i = 0; i <= size - 1; i ++)
+	{
+
+		for(int j = 1; j <= size - 1; j ++)
+		{
+
+
+			if(array[j] <  array[j - 1])
+			{
+
+//printf("%d %d\n", array[j - 1], array[j]);
+
+				int c = array[j - 1];
+
+				array[j - 1] = array[j];
+
+				array[j] = c;
+
+//printf("%d %d\n\n", array[j - 1], array[j]);
+
+			}//end if
+
+
+
+
+		}//end for j
+
+	}//end for i
+
+
+
+
 	}
 
 int main( int argc, char* argv[] ) {
@@ -177,7 +222,7 @@ int main( int argc, char* argv[] ) {
 	// get the random numbers
 	array = makeRandArray( size, seed );
 
-	print_array(array, size);
+	//print_array(array, size);
 
 	cudaEvent_t startTotal, stopTotal; float timeTotal; cudaEventCreate(&startTotal); cudaEventCreate(&stopTotal); cudaEventRecord( startTotal, 0 );
 
@@ -185,7 +230,14 @@ int main( int argc, char* argv[] ) {
 	///////////////////////  YOUR CODE HERE       ///////////////////////
 	/////////////////////////////////////////////////////////////////////
 
-	bubble_sort(array, size);
+curandState* devRandomGeneratorStateArray;
+    cudaMalloc ( &devRandomGeneratorStateArray, 1*sizeof( curandState ) );
+
+	//bubble_sort(array, size);
+
+	matavgKernel <<< 1, 1 >>> (array, size); 
+
+	//matavgKerenel(array, size);
 
 	/***********************************
 	 *

@@ -304,7 +304,7 @@ print_array(host_array, size);
 		for(int i = 0; i <= size - 1; i ++)
 		{
 
-			printf("%d, ", array[i]);
+			printf("%d, ", host_array[i]);
 
 		}//end for i
 

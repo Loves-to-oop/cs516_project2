@@ -10,6 +10,10 @@
 #include <curand_kernel.h>
 #include <cuda.h>
 
+/*
+#include "cuPrintf.cu"`
+ */
+
 
 using namespace std;
 
@@ -97,7 +101,7 @@ void bubble_sort(int * array, int size)
 			if(array[j] <  array[j - 1])
 			{
 
-//printf("%d %d\n", array[j - 1], array[j]);
+				//printf("%d %d\n", array[j - 1], array[j]);
 
 				int c = array[j - 1];
 
@@ -105,7 +109,7 @@ void bubble_sort(int * array, int size)
 
 				array[j] = c;
 
-//printf("%d %d\n\n", array[j - 1], array[j]);
+				//printf("%d %d\n\n", array[j - 1], array[j]);
 
 			}//end if
 
@@ -147,48 +151,51 @@ int * makeRandArray( const int size, const int seed ) {
 	return array; }
 
 
-/*
+	/*
 
-   Kernel is fuction to run on GPU.
+	   Kernel is fuction to run on GPU.
 
-   */
+	 */
 
 	__global__ void matavgKernel(int * array, int size ) {
 
-
-	for(int i = 0; i <= size - 1; i ++)
-	{
-
-		for(int j = 1; j <= size - 1; j ++)
+		//array[0] = 5;
+		for(int i = 0; i <= size - 1; i ++)
 		{
 
 
-			if(array[j] <  array[j - 1])
+			//cuPrintf(“Value is: %d\n”, i);
+
+			for(int j = 1; j <= size - 1; j ++)
 			{
 
-//printf("%d %d\n", array[j - 1], array[j]);
 
-				int c = array[j - 1];
+				if(array[j] <  array[j - 1])
+				{
 
-				array[j - 1] = array[j];
+					//printf("%d %d\n", array[j - 1], array[j]);
 
-				array[j] = c;
+					int c = array[j - 1];
 
-//printf("%d %d\n\n", array[j - 1], array[j]);
+					array[j - 1] = array[j];
 
-			}//end if
+					array[j] = c;
 
+					//printf("%d %d\n\n", array[j - 1], array[j]);
 
-
-
-		}//end for j
-
-	}//end for i
+				}//end if
 
 
 
 
-	}
+			}//end for j
+
+		}//end for i
+
+
+		//return array;
+
+	}//end function
 
 int main( int argc, char* argv[] ) {
 	int * array; // the poitner to the array of rands 
@@ -222,7 +229,20 @@ int main( int argc, char* argv[] ) {
 	// get the random numbers
 	array = makeRandArray( size, seed );
 
-	//print_array(array, size);
+	int * host_array = (int*)malloc(size * 4);
+
+	for(int i =0; i <= size - 1; i ++)
+	{
+	
+		host_array[i] = array[i];
+	
+	}//end for i
+
+	print_array(array, size);
+
+printf("host_array\n");
+
+print_array(host_array, size);
 
 	cudaEvent_t startTotal, stopTotal; float timeTotal; cudaEventCreate(&startTotal); cudaEventCreate(&stopTotal); cudaEventRecord( startTotal, 0 );
 
@@ -230,13 +250,36 @@ int main( int argc, char* argv[] ) {
 	///////////////////////  YOUR CODE HERE       ///////////////////////
 	/////////////////////////////////////////////////////////////////////
 
-curandState* devRandomGeneratorStateArray;
-    cudaMalloc ( &devRandomGeneratorStateArray, 1*sizeof( curandState ) );
+	//curandState* devRandomGeneratorStateArray;
+	//  cudaMalloc ( &devRandomGeneratorStateArray, 1*sizeof( curandState ) );
 
 	//bubble_sort(array, size);
 
-	matavgKernel <<< 1, 1 >>> (array, size); 
+	//    thrust::host_vector<int> hostCounts(1,  0);
+	//  thrust::device_vector<int> deviceCounts(hostCounts);
 
+	int * cuda_array;
+
+	cudaMalloc(&cuda_array, size * 4);
+
+	cudaMemcpy(cuda_array, host_array, size * 4, cudaMemcpyHostToDevice);
+
+	//matavgKernel <<< 1, 1 >>> (array, size); 
+
+	matavgKernel <<< 1, 1 >>> (cuda_array, size); 
+
+	cudaMemcpy(host_array, cuda_array, size * 4, cudaMemcpyDeviceToHost);
+
+	cudaFree(cuda_array);
+
+	//https://stackoverflow.com/questions/6419700/way-to-verify-kernel-was-executed-in-cuda
+	/*
+	   cudaError_t err = cudaGetLastError();
+	   if (err != cudaSuccess) 
+	   printf("Error: %s\n", cudaGetErrorString(err));
+
+	//thrust::reduce(deviceCounts.begin(), deviceCounts.end(), 0, thrust::plus<int>());;
+	 */
 	//matavgKerenel(array, size);
 
 	/***********************************

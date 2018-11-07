@@ -79,7 +79,6 @@ inline void __cudaCheckError( const char *file, const int line ) {
 
 
 	// More careful checking. However, this will affect performance. // Comment if not needed
-
 #pragma warning( pop )
 #endif // CUDA_CHECK_ERROR
 
@@ -154,19 +153,22 @@ int * makeRandArray( const int size, const int seed ) {
 	/*
 
 	   Kernel is fuction to run on GPU.
+           Device is function called from kernel.
 
 	 */
 
-	__global__ void matavgKernel(int * array, int size ) {
+
+
+	__device__ void bubble_sort_cuda(int * array, int start, int finish ) {
 
 		//array[0] = 5;
-		for(int i = 0; i <= size - 1; i ++)
+		for(int i = start; i <= finish - 1; i ++)
 		{
 
 
 			//cuPrintf(“Value is: %d\n”, i);
 
-			for(int j = 1; j <= size - 1; j ++)
+			for(int j = start + 1; j <= finish - 1; j ++)
 			{
 
 
@@ -196,6 +198,31 @@ int * makeRandArray( const int size, const int seed ) {
 		//return array;
 
 	}//end function
+
+__global__ void matavgKernel(int * array, int size, int bucket_size ) {
+
+//int i = 0;
+
+//while(i <= size - 1)
+{
+
+int i = threadIdx.x;
+
+int bucket_number = i + 1;
+
+int start = (bucket_number - 1) * bucket_size;
+
+int finish = (bucket_number * bucket_size);
+
+printf("start: %d, finish: %d\n", start, finish);
+
+	bubble_sort_cuda(array, start, finish);
+
+//i += bucket_size;
+
+}//end while
+
+}//end function
 
 int main( int argc, char* argv[] ) {
 	int * array; // the poitner to the array of rands 
@@ -227,22 +254,23 @@ int main( int argc, char* argv[] ) {
 	   }
 	 */
 	// get the random numbers
+
 	array = makeRandArray( size, seed );
 
 	int * host_array = (int*)malloc(size * 4);
 
 	for(int i =0; i <= size - 1; i ++)
 	{
-	
+
 		host_array[i] = array[i];
-	
+
 	}//end for i
 
 	print_array(array, size);
 
-printf("host_array\n");
+	printf("host_array\n");
 
-print_array(host_array, size);
+	print_array(host_array, size);
 
 	cudaEvent_t startTotal, stopTotal; float timeTotal; cudaEventCreate(&startTotal); cudaEventCreate(&stopTotal); cudaEventRecord( startTotal, 0 );
 
@@ -258,6 +286,20 @@ print_array(host_array, size);
 	//    thrust::host_vector<int> hostCounts(1,  0);
 	//  thrust::device_vector<int> deviceCounts(hostCounts);
 
+
+
+int number_of_buckets = (int)floor(size / 10);
+
+if(number_of_buckets == 0)
+	number_of_buckets = 1;
+
+
+printf("number_of_buckets: %d\n", number_of_buckets);
+
+int bucket_size = size / number_of_buckets;
+
+printf("bucket_size: %d\n", bucket_size);
+
 	int * cuda_array;
 
 	cudaMalloc(&cuda_array, size * 4);
@@ -266,7 +308,11 @@ print_array(host_array, size);
 
 	//matavgKernel <<< 1, 1 >>> (array, size); 
 
-	matavgKernel <<< 1, 1 >>> (cuda_array, size); 
+//int numBlocks = 1;
+
+//dim3 threads_per_block(2, 2);
+
+	matavgKernel <<< 1, number_of_buckets >>> (cuda_array, size, bucket_size); 
 
 	cudaMemcpy(host_array, cuda_array, size * 4, cudaMemcpyDeviceToHost);
 

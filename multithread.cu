@@ -79,7 +79,6 @@ inline void __cudaCheckError( const char *file, const int line ) {
 
 
 	// More careful checking. However, this will affect performance. // Comment if not needed
-
 #pragma warning( pop )
 #endif // CUDA_CHECK_ERROR
 
@@ -157,7 +156,9 @@ int * makeRandArray( const int size, const int seed ) {
 
 	 */
 
-	__global__ void matavgKernel(int * array, int size ) {
+
+
+	__device__ void bubble_sort_cuda(int * array, int size ) {
 
 		//array[0] = 5;
 		for(int i = 0; i <= size - 1; i ++)
@@ -197,6 +198,14 @@ int * makeRandArray( const int size, const int seed ) {
 
 	}//end function
 
+__global__ void matavgKernel(int * array, int size ) {
+
+
+	bubble_sort_cuda(array, size);
+
+
+}//end function
+
 int main( int argc, char* argv[] ) {
 	int * array; // the poitner to the array of rands 
 	int size, seed; // values for the size of the array 
@@ -227,22 +236,23 @@ int main( int argc, char* argv[] ) {
 	   }
 	 */
 	// get the random numbers
+
 	array = makeRandArray( size, seed );
 
 	int * host_array = (int*)malloc(size * 4);
 
 	for(int i =0; i <= size - 1; i ++)
 	{
-	
+
 		host_array[i] = array[i];
-	
+
 	}//end for i
 
 	print_array(array, size);
 
-printf("host_array\n");
+	printf("host_array\n");
 
-print_array(host_array, size);
+	print_array(host_array, size);
 
 	cudaEvent_t startTotal, stopTotal; float timeTotal; cudaEventCreate(&startTotal); cudaEventCreate(&stopTotal); cudaEventRecord( startTotal, 0 );
 

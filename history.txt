@@ -1,0 +1,122 @@
+    1  ls
+    2  mkdir scott
+    3  ls
+    4  cd scott
+    5  mkdir cs516_project2
+    6  ls
+    7  cd cs516_project2
+    8  ls
+    9  git clone http://github.com/Loves-to-oop/cs516_project2
+   10  ls
+   11  cd cs516_project2
+   12  ls
+   13  nvcc
+   14  nvcc template.cu
+   15  ls
+   16  cd scott
+   17  ls
+   18  cd cs516_project2
+   19  ls
+   20  cd cs516_project2
+   21  ls
+   22  vim template.cu
+   23  ls
+   24  cp template.cpp template2.cu
+   25  ls
+   26  nvcc template2.cu
+   27  nvcc template.cu
+   28  vim template2.cu
+   29  ls
+   30  vim template2.cu
+   31  ls
+   32  vim Makefile
+   33  vim template2.cu
+   34  ls
+   35  git add .
+   36  git commit -m "template file compiles"
+   37  git push
+   38  git status
+   39  git log
+   40  ls
+   41  cd scott
+   42  ls
+   43  cd cs516_project2
+   44  ls
+   45  cd cs516_project2
+   46  ls
+   47  cp template2.cu thrust.cu
+   48  ls
+   49  vim Makefile
+   50  ls
+   51  rm template.cu
+   52  ls
+   53  mv template2.cu template.cu
+   54  ls
+   55  vim Makefile
+   56  make
+   57  ls
+   58  vim thrust.cu
+   59  ls
+   60  ./template 10 10
+   61  ./template 10 10 1
+   62  ./thrust 10 10 1
+   63  ls
+   64  vim thrust.cu
+   65  ls
+   66  vim thrust.cu
+   67  ls
+   68  vim thrust.cu
+   69  ls
+   70  vim thrust.cu
+   71  ls
+   72  vim thrust.cu
+   73  git add .
+   74  git commit -m "thrust sort works"
+   75  git push
+   76  ls
+   77  git log
+   78  ls
+   79  vim thrust.cu
+   80  ls
+   81  cp template.cu singlethread.cu
+   82  ls
+   83  vim singlethread.cu
+   84  ls
+   85  make
+   86  git add .
+   87  git commit -m "working bubble sort"
+   88  git push
+   89  ls
+   90  vim single_thread.cu
+   91  ls
+   92  vim singlethread.cu
+   93  git add .
+   94  git commit -m "kernel is run without errors"
+   95  git push
+   96  ls
+   97  vim singlethread.cu
+   98  ls
+   99  vim singlethread.cu
+  100  git add .
+  101  git commit -m "progress toward single threaded CUDA implementation"
+  102  git push
+  103  ls
+  104  vim singlethread.cu
+  105  ls
+  106  git add .
+  107  git commit -m "single thread CUDA program works"
+  108  git push
+  109  ls
+  110  cd scott
+  111  ls
+  112  cd cs516_project2
+  113  ls
+  114  cd cs516_project2
+  115  ls
+  116  git checkout -b create_multithread
+  117  git branch
+  118  git push --set-upstream cs516_project2 create_multithread
+  119  git push --set-upstream http://github.com/Loves-to-oop/cs516_project2 create_multithread
+  120  ls
+  121  git branch
+  122  history > history.txt

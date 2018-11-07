@@ -158,16 +158,16 @@ int * makeRandArray( const int size, const int seed ) {
 
 
 
-	__device__ void bubble_sort_cuda(int * array, int size ) {
+	__device__ void bubble_sort_cuda(int * array, int start, int finish ) {
 
 		//array[0] = 5;
-		for(int i = 0; i <= size - 1; i ++)
+		for(int i = start; i <= finish - 1; i ++)
 		{
 
 
 			//cuPrintf(“Value is: %d\n”, i);
 
-			for(int j = 1; j <= size - 1; j ++)
+			for(int j = start + 1; j <= finish - 1; j ++)
 			{
 
 
@@ -201,7 +201,7 @@ int * makeRandArray( const int size, const int seed ) {
 __global__ void matavgKernel(int * array, int size ) {
 
 
-	bubble_sort_cuda(array, size);
+	bubble_sort_cuda(array, 0, size);
 
 
 }//end function

@@ -9,6 +9,7 @@
 #include <curand.h>
 #include <curand_kernel.h>
 #include <cuda.h>
+#include <bits/stdc++.h>
 
 /*
 #include "cuPrintf.cu"`
@@ -157,45 +158,39 @@ int * makeRandArray( const int size, const int seed ) {
 
 	 */
 
-	__global__ void matavgKernel(int * array, int size ) {
+	__global__ void matavgKernel(int * array, int size, int blocks_on_a_side ) {
 
-		//array[0] = 5;
+//printf("blockdim.x: %d\n", blockDim.x);
+
+
+		//i is what number, j is what digit to sort, then sort based on digit..
+
+		int i = threadIdx.x + blockDim.x * blockIdx.x;
+		int j = threadIdx.y + blockDim.y * blockIdx.y;
+
+int threads_on_a_side = (blockDim.x * blocks_on_a_side);
+
+int current = i + (j * threads_on_a_side);
+
+printf("%d = %d + (%d * %d)\n", current, i, j, threads_on_a_side);
+
+
+	}//end function
+
+
+void print_array_(int * host_array, int size)
+{
+
 		for(int i = 0; i <= size - 1; i ++)
 		{
 
-
-			//cuPrintf(“Value is: %d\n”, i);
-
-			for(int j = 1; j <= size - 1; j ++)
-			{
-
-
-				if(array[j] <  array[j - 1])
-				{
-
-					//printf("%d %d\n", array[j - 1], array[j]);
-
-					int c = array[j - 1];
-
-					array[j - 1] = array[j];
-
-					array[j] = c;
-
-					//printf("%d %d\n\n", array[j - 1], array[j]);
-
-				}//end if
-
-
-
-
-			}//end for j
+			printf("%d, ", host_array[i]);
 
 		}//end for i
 
+		printf("\n");
 
-		//return array;
-
-	}//end function
+}//end function
 
 int main( int argc, char* argv[] ) {
 	int * array; // the poitner to the array of rands 
@@ -227,22 +222,23 @@ int main( int argc, char* argv[] ) {
 	   }
 	 */
 	// get the random numbers
+
 	array = makeRandArray( size, seed );
 
 	int * host_array = (int*)malloc(size * 4);
 
 	for(int i =0; i <= size - 1; i ++)
 	{
-	
+
 		host_array[i] = array[i];
-	
+
 	}//end for i
 
 	print_array(array, size);
 
-printf("host_array\n");
+	printf("host_array\n");
 
-print_array(host_array, size);
+	print_array(host_array, size);
 
 	cudaEvent_t startTotal, stopTotal; float timeTotal; cudaEventCreate(&startTotal); cudaEventCreate(&stopTotal); cudaEventRecord( startTotal, 0 );
 
@@ -266,7 +262,79 @@ print_array(host_array, size);
 
 	//matavgKernel <<< 1, 1 >>> (array, size); 
 
-	matavgKernel <<< 1, 1 >>> (cuda_array, size); 
+	int max = 0;
+
+	for(int i = 0; i <= size - 1; i ++)
+	{
+
+	//https://stackoverflow.com/questions/35858264/c-finding-most-significant-bit-of-a-binary-number
+
+		bitset<32> base2 = array[i];
+
+		int j = 32;
+
+		while(base2[j] != 1)
+			j--;
+
+		j++;
+
+		printf("num: %d, most sig: %d\n", array[i], j);
+
+		if(j > max)
+		{
+
+			max = j;
+
+		}//end if
+
+	}//end for i
+
+	printf("max sig: %d\n", max);
+
+/*
+
+   This is saying the threadid within a small block, plus the current block
+   in the x direction * the size of each block in the x direction to give
+   the address in the larger x direction.
+
+//threadIdx.x + (blockDim.x * blockIdx.x);
+  
+//divide the array into buckets based on thread number.
+
+
+
+*/
+	
+//int numBlocks = 1;
+
+int total_threads = (size / 10);
+
+//if(total_threads == 0)
+//	total_threads = 1;
+
+int diameter = sqrt(total_threads) + 1;
+
+printf("total threads: %d, diameter: %d\n", total_threads, diameter);
+
+	int number_of_digits = 32;
+
+	int threads_on_a_side = diameter / 2;
+
+	printf("threads_on_a_side: %d\n", threads_on_a_side);
+
+int blocks_on_a_side = (diameter / threads_on_a_side) + 1;
+
+printf("blocks_on_a_side: %d\n", blocks_on_a_side);
+
+int number_of_threads = pow(blocks_on_a_side * threads_on_a_side, 2);
+
+printf("number of threads: %d\n", number_of_threads);
+
+	dim3 threadsPerBlock(threads_on_a_side, threads_on_a_side);
+
+	dim3 numBlocks(blocks_on_a_side, blocks_on_a_side);
+
+	matavgKernel <<< numBlocks, threadsPerBlock >>> (cuda_array, size, blocks_on_a_side); 
 
 	cudaMemcpy(host_array, cuda_array, size * 4, cudaMemcpyDeviceToHost);
 
@@ -300,17 +368,12 @@ print_array(host_array, size);
 
 	if( printSorted ){
 
-
-		for(int i = 0; i <= size - 1; i ++)
-		{
-
-			printf("%d, ", host_array[i]);
-
-		}//end for i
-
-		printf("\n");
+print_array_(host_array, size);
 
 		///////////////////////////////////////////////
 		/// Your code to print the sorted array here //
 		///////////////////////////////////////////////
-	} }
+	}//end if 
+
+
+}//end main

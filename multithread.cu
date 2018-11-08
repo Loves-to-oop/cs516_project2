@@ -15,6 +15,15 @@
 #include "cuPrintf.cu"`
  */
 
+/*
+
+Working on using a 1D array to store the 2D buckets.
+Working in the kernel on calculating the start and finish
+in the 1D array to pass into the bubble sort function
+for each bucket.
+
+   */
+
 
 using namespace std;
 
@@ -179,7 +188,7 @@ int * makeRandArray( const int size, const int seed ) {
 
 
 	__global__ void matavgKernel(int * array, int size, int blocks_on_a_side, 
-			int number_of_threads, int *array_of_buckets[], int * bucket_counts) {
+			int number_of_threads, int *array_of_buckets, int array_size, int * bucket_counts) {
 
 		//printf("blockdim.x: %d\n", blockDim.x);
 
@@ -197,10 +206,53 @@ int * makeRandArray( const int size, const int seed ) {
 
 		printf("current bucket size: %d\n", bucket_counts[current]);
 
+		int bucket = 0;
 
-		print_array_device(array_of_buckets[current], bucket_counts[current]);
+		int start = 0;
 
-		bubble_sort(array_of_buckets[current], bucket_counts[current]);
+		int finish = 0;
+
+		bool start_set = false;
+
+		bool finish_set = false;
+
+		for(int i = 0; i <= array_size - 1; i++)
+		{
+
+
+//printf("%d, ", array_of_buckets[i]);
+
+			if(array_of_buckets[i] == -1)
+				bucket ++;
+
+			if(bucket == current && start_set == false)
+			{
+				start = i;
+if(start != 0)
+	start ++;
+
+				start_set = true;
+			}//end if
+
+			if(bucket == current + 1 && finish_set == false)
+			{
+
+				finish = i - 1;
+
+				finish_set = true;
+
+
+			}//end if
+
+		}//end for i
+
+//finish = finish - 2;
+
+printf("current: %d, start: %d, finish: %d\n", current, start, finish);
+
+		//print_array_device(array_of_buckets[current], bucket_counts[current]);
+
+		//bubble_sort(array_of_buckets[current], bucket_counts[current]);
 
 
 
@@ -437,63 +489,32 @@ int main( int argc, char* argv[] ) {
 
 	}//end for i
 
-for(int i = 0; i <= iter - 1; i ++)
-{
-
-printf("%d, ", array_of_buckets_1D[i]);
-
-
-}//end for i
-
-
-	int ** cuda_array_of_buckets;
-
-	/*
-	   int ** cuda_array_of_buckets;
-
-	   int ** temp_array;
-
-	   cudaMalloc((void **) &temp_array, size * 20);
-
-	//cudaMalloc(&cuda_array_of_buckets, size * 20);
-
-	cudaMemcpy(cuda_array_of_buckets, temp_array, size * 20, cudaMemcpyHostToDevice);
-
-	for(int i = 0; i <= number_of_buckets - 1; i ++)
+	for(int i = 0; i <= iter - 1; i ++)
 	{
 
+		printf("%d, ", array_of_buckets_1D[i]);
 
-	cudaMalloc((void **)&cuda_array_of_buckets[i], bucket_memory);
-
-	for(int j = 0; j <= bucket_counts[i] - 1; j ++)
-	{
-
-	cuda_array_of_buckets[i][j] = array_of_buckets[i][j];
-
-
-	}//end for j
 
 	}//end for i
 
 
-	 */
+	int * cuda_array_of_buckets;
+
+
+	cudaMalloc(&cuda_array_of_buckets, size * 2 * 4);
+
+	cudaMemcpy(cuda_array_of_buckets, array_of_buckets_1D, size * 2 * 4
+			, cudaMemcpyHostToDevice);
+
 	matavgKernel <<< numBlocks, threadsPerBlock >>> 
 		(cuda_array, size, blocks_on_a_side, 
-		 number_of_threads, cuda_array_of_buckets, cuda_bucket_counts); 
+		 number_of_threads, cuda_array_of_buckets, iter, cuda_bucket_counts); 
 
 	cudaMemcpy(host_array, cuda_array, size * 4, cudaMemcpyDeviceToHost);
 
 	cudaFree(cuda_array);
 
 	//https://stackoverflow.com/questions/6419700/way-to-verify-kernel-was-executed-in-cuda
-	/*
-	   cudaError_t err = cudaGetLastError();
-	   if (err != cudaSuccess) 
-	   printf("Error: %s\n", cudaGetErrorString(err));
-
-	//thrust::reduce(deviceCounts.begin(), deviceCounts.end(), 0, thrust::plus<int>());;
-	 */
-	//matavgKerenel(array, size);
 
 	/***********************************
 	 *

@@ -563,6 +563,22 @@ print_array(array_of_buckets_1D, iter);
 
 	cudaFree(cuda_array);
 
+int j = 0;
+
+for(int i = 0; i <= iter - 1; i ++)
+{
+
+if(array_of_buckets_1D[i] != -1)
+{
+
+	host_array[j] = array_of_buckets_1D[i];
+
+	j++;
+
+}//end if
+
+}//end for i
+
 	//https://stackoverflow.com/questions/6419700/way-to-verify-kernel-was-executed-in-cuda
 
 	/***********************************

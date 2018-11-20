@@ -17,12 +17,12 @@
 
 /*
 
-Working on using a 1D array to store the 2D buckets.
-Working in the kernel on calculating the start and finish
-in the 1D array to pass into the bubble sort function
-for each bucket.
+   Working on using a 1D array to store the 2D buckets.
+   Working in the kernel on calculating the start and finish
+   in the 1D array to pass into the bubble sort function
+   for each bucket.
 
-   */
+ */
 
 
 using namespace std;
@@ -97,39 +97,57 @@ inline void __cudaCheckError( const char *file, const int line ) {
 
 }
 
-__device__ void bubble_sort(int * array, int size)
+__device__ void bubble_sort(int * array, int size, int start, int finish)
 {
 
+if((finish - start) == 1 && array[finish] < array[start])
+{
 
-	for(int i = 0; i <= size - 1; i ++)
+printf("swap: %d, %d\n", array[start], array[finish]);
+
+int c = array[start];
+
+array[start] = array[finish];
+
+array[finish] = c;
+
+}//end if
+
+	if((finish - start) > 0)
 	{
 
-		for(int j = 1; j <= size - 1; j ++)
+printf("%d - %d > 0\n", finish, start);
+
+		for(int i = start; i <= finish - 1; i ++)
 		{
 
-
-			if(array[j] <  array[j - 1])
+			for(int j = start + 1; j <= finish - 1; j ++)
 			{
 
-				//printf("%d %d\n", array[j - 1], array[j]);
 
-				int c = array[j - 1];
+				if(array[j] <  array[j - 1])
+				{
 
-				array[j - 1] = array[j];
+					//printf("%d %d\n", array[j - 1], array[j]);
 
-				array[j] = c;
+					int c = array[j - 1];
 
-				//printf("%d %d\n\n", array[j - 1], array[j]);
+					array[j - 1] = array[j];
 
-			}//end if
+					array[j] = c;
+
+					//printf("%d %d\n\n", array[j - 1], array[j]);
+
+				}//end if
 
 
 
 
-		}//end for j
+			}//end for j
 
-	}//end for i
+		}//end for i
 
+	}//end if
 
 }//end function
 
@@ -220,7 +238,7 @@ int * makeRandArray( const int size, const int seed ) {
 		{
 
 
-//printf("%d, ", array_of_buckets[i]);
+			//printf("%d, ", array_of_buckets[i]);
 
 			if(array_of_buckets[i] == -1)
 				bucket ++;
@@ -228,8 +246,8 @@ int * makeRandArray( const int size, const int seed ) {
 			if(bucket == current && start_set == false)
 			{
 				start = i;
-if(start != 0)
-	start ++;
+				if(start != 0)
+					start ++;
 
 				start_set = true;
 			}//end if
@@ -246,9 +264,24 @@ if(start != 0)
 
 		}//end for i
 
-//finish = finish - 2;
+		//finish = finish - 2;
 
-printf("current: %d, start: %d, finish: %d\n", current, start, finish);
+		printf("current: %d, start: %d, finish: %d\n", current, start, finish);
+
+		if(start < finish)
+		{
+			if(current == 1)
+			{printf("before: ");
+				print_array_device(array_of_buckets, array_size);
+			}
+			bubble_sort(array_of_buckets, size, start, finish);
+			if(current == 1)
+			{printf("after: ");
+				print_array_device(array_of_buckets, array_size);
+			}}//end if
+
+		//print_array_device(array_of_buckets, array_size);
+
 
 		//print_array_device(array_of_buckets[current], bucket_counts[current]);
 
@@ -267,7 +300,7 @@ int find_max_significant_digit(int * array, int size)
 
 
 
-
+	return 0;
 
 }//end function
 

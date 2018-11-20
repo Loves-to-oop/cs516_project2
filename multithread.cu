@@ -120,10 +120,12 @@ array[finish] = d;
 
 printf("%d - %d > 1 \n", finish, start);
 
-		for(int i = start; i <= finish - 1; i ++)
+		for(int i = start; i <= finish; i ++)
 		{
 
-			for(int j = start + 1; j <= finish - 1; j ++)
+printf("i: %d\n", i);
+
+			for(int j = start + 1; j <= finish; j ++)
 			{
 
 

@@ -22,6 +22,8 @@
    in the 1D array to pass into the bubble sort function
    for each bucket.
 
+Figure out why bubble sort is not working on subarrays.
+
  */
 
 
@@ -105,18 +107,18 @@ if((finish - start) == 1 && array[finish] < array[start])
 
 printf("swap: %d, %d\n", array[start], array[finish]);
 
-int c = array[start];
+int d = array[start];
 
 array[start] = array[finish];
 
-array[finish] = c;
+array[finish] = d;
 
 }//end if
 
-	if((finish - start) > 0)
+	if((finish - start) > 1)
 	{
 
-printf("%d - %d > 0\n", finish, start);
+printf("%d - %d > 1 \n", finish, start);
 
 		for(int i = start; i <= finish - 1; i ++)
 		{
@@ -128,7 +130,7 @@ printf("%d - %d > 0\n", finish, start);
 				if(array[j] <  array[j - 1])
 				{
 
-					//printf("%d %d\n", array[j - 1], array[j]);
+					printf("swap bubble: %d %d\n", array[j - 1], array[j]);
 
 					int c = array[j - 1];
 
@@ -542,6 +544,18 @@ int main( int argc, char* argv[] ) {
 	matavgKernel <<< numBlocks, threadsPerBlock >>> 
 		(cuda_array, size, blocks_on_a_side, 
 		 number_of_threads, cuda_array_of_buckets, iter, cuda_bucket_counts); 
+
+//print_array_device(cuda_array_of_buckets, size);
+
+//int *buckets_returned;
+
+cudaMemcpy(array_of_buckets_1D, cuda_array_of_buckets, size * 2 * 4, cudaMemcpyDeviceToHost);
+
+cudaFree(cuda_array_of_buckets);
+
+printf("after sort:\n");
+
+print_array(array_of_buckets_1D, iter);
 
 	cudaMemcpy(host_array, cuda_array, size * 4, cudaMemcpyDeviceToHost);
 

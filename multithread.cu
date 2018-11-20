@@ -323,6 +323,236 @@ void print_array_(int * host_array, int size)
 
 }//end function
 
+void unit_test()
+{
+
+int *array;
+
+int size;
+
+int seed;
+
+int bucket;
+
+for(int z = 0; z <= 10 - 1; z ++)
+{
+
+size = 10;
+
+seed = 10;
+
+	array = makeRandArray( size, seed );
+printf("array created\n");
+
+	int * host_array = (int*)malloc(size * 4);
+
+	for(int i =0; i <= size - 1; i ++)
+	{
+
+		host_array[i] = array[i];
+
+	}//end for i
+
+	print_array(array, size);
+
+	printf("host_array\n");
+
+	print_array(host_array, size);
+
+	cudaEvent_t startTotal, stopTotal; float timeTotal; cudaEventCreate(&startTotal); cudaEventCreate(&stopTotal); cudaEventRecord( startTotal, 0 );
+
+	int * cuda_array;
+
+	cudaMalloc(&cuda_array, size * 4);
+
+	cudaMemcpy(cuda_array, host_array, size * 4, cudaMemcpyHostToDevice);
+	int total_threads = (size / 10);
+	
+	int diameter = sqrt(total_threads) + 1;
+
+	printf("total threads: %d, diameter: %d\n", total_threads, diameter);
+
+	int number_of_digits = 32;
+
+	int threads_on_a_side = diameter / 2;
+
+	printf("threads_on_a_side: %d\n", threads_on_a_side);
+
+	int blocks_on_a_side = (diameter / threads_on_a_side) + 1;
+
+	printf("blocks_on_a_side: %d\n", blocks_on_a_side);
+
+	int number_of_threads = pow(blocks_on_a_side * threads_on_a_side, 2);
+	int number_of_buckets = number_of_threads;
+
+	printf("number of threads: %d, buckets: %d\n", number_of_threads, number_of_buckets);
+
+	dim3 threadsPerBlock(threads_on_a_side, threads_on_a_side);
+
+	dim3 numBlocks(blocks_on_a_side, blocks_on_a_side);
+	
+	int ** array_of_buckets = new int*[number_of_buckets];
+
+	int *bucket_counts = new int[number_of_buckets];
+
+
+	int bucket_memory = 1000;
+
+	for(int i = 0; i <= number_of_buckets - 1; i ++)
+	{
+
+		array_of_buckets[i] = new int[bucket_memory];
+
+
+	}//end for i
+
+	int max_value = 0;
+
+
+	for(int i = 0; i <= size - 1; i ++)
+	{
+
+
+		if(array[i] > max_value)
+			max_value = array[i];
+
+
+	}//end for i
+
+	printf("max: %d\n", max_value);
+
+	for(int i = 0; i <= size - 1; i ++)
+	{
+
+printf("i: %d\n", i);
+
+printf("array[i]: %d\n", array[i]);
+
+printf("bucket: %d\n", bucket);
+
+printf("number of buckets: %d\n", number_of_buckets);
+
+printf("value: %.2f\n", ((double)array[i] / (double)(max_value + 1)) * number_of_buckets);
+
+		bucket = ((double)array[i] / (double)(max_value + 1)) * number_of_buckets;
+
+		printf("array[i]: %d, bucket: %d, ", array[i], bucket);
+
+		printf("array[i] / max_value: %f, ", (double)array[i] / (double)(max_value + 1)); 
+
+		array_of_buckets[bucket][bucket_counts[bucket]] = array[i]; 
+
+		printf("value_in_array: %d, ", array_of_buckets[bucket][bucket_counts[bucket]]);
+
+		bucket_counts[bucket] ++;
+
+		printf("bucket count: %d, %d\n", 
+				bucket_counts[bucket], 
+				array_of_buckets[bucket][bucket_counts[bucket] - 1]);
+
+
+	}//end for i
+
+
+	int * cuda_bucket_counts;
+
+	cudaMalloc(&cuda_bucket_counts, number_of_buckets * 4);
+
+	cudaMemcpy(cuda_bucket_counts, bucket_counts, number_of_buckets * 4, cudaMemcpyHostToDevice);
+
+	int * array_of_buckets_1D = new int[size * 2];
+
+	int iter = 0;
+
+	for(int i = 0; i <= number_of_buckets - 1; i++)
+	{
+
+		for(int j = 0; j <= bucket_counts[i] - 1; j++)
+		{
+
+
+			array_of_buckets_1D[iter] = array_of_buckets[i][j];
+
+			iter ++;
+
+		}//end for j
+
+
+		array_of_buckets_1D[iter] = -1;
+
+		iter ++;
+
+
+	}//end for i
+
+	for(int i = 0; i <= iter - 1; i ++)
+	{
+
+		printf("%d, ", array_of_buckets_1D[i]);
+
+
+	}//end for i
+
+
+	int * cuda_array_of_buckets;
+
+
+	cudaMalloc(&cuda_array_of_buckets, size * 2 * 4);
+
+	cudaMemcpy(cuda_array_of_buckets, array_of_buckets_1D, size * 2 * 4
+			, cudaMemcpyHostToDevice);
+
+	matavgKernel <<< numBlocks, threadsPerBlock >>> 
+		(cuda_array, size, blocks_on_a_side, 
+		 number_of_threads, cuda_array_of_buckets, iter, cuda_bucket_counts); 
+
+cudaMemcpy(array_of_buckets_1D, cuda_array_of_buckets, size * 2 * 4, cudaMemcpyDeviceToHost);
+
+cudaFree(cuda_array_of_buckets);
+
+printf("after sort(unit test):\n");
+
+print_array(array_of_buckets_1D, iter);
+
+	cudaMemcpy(host_array, cuda_array, size * 4, cudaMemcpyDeviceToHost);
+
+	cudaFree(cuda_array);
+
+int j = 0;
+
+for(int i = 0; i <= iter - 1; i ++)
+{
+
+if(array_of_buckets_1D[i] != -1)
+{
+
+	host_array[j] = array_of_buckets_1D[i];
+
+	j++;
+
+}//end if
+
+}//end for i
+
+	cudaEventRecord( stopTotal, 0 );
+	cudaEventSynchronize( stopTotal );
+	cudaEventElapsedTime( &timeTotal, startTotal, stopTotal );
+	cudaEventDestroy( startTotal );
+	cudaEventDestroy( stopTotal );
+
+		//print_array_(host_array, size);
+
+printf("final array: ");
+
+		print_array_(host_array, size);
+
+		}//end for
+
+
+
+}//end function
+
+
 int main( int argc, char* argv[] ) {
 	int * array; // the poitner to the array of rands 
 	int size, seed; // values for the size of the array 
@@ -353,6 +583,8 @@ int main( int argc, char* argv[] ) {
 	   }
 	 */
 	// get the random numbers
+
+unit_test();
 
 	array = makeRandArray( size, seed );
 

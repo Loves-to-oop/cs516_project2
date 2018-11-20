@@ -1,0 +1,291 @@
+    1  ls
+    2  mkdir scott
+    3  ls
+    4  cd scott
+    5  mkdir cs516_project2
+    6  ls
+    7  cd cs516_project2
+    8  ls
+    9  git clone http://github.com/Loves-to-oop/cs516_project2
+   10  ls
+   11  cd cs516_project2
+   12  ls
+   13  nvcc
+   14  nvcc template.cu
+   15  ls
+   16  cd scott
+   17  ls
+   18  cd cs516_project2
+   19  ls
+   20  cd cs516_project2
+   21  ls
+   22  vim template.cu
+   23  ls
+   24  cp template.cpp template2.cu
+   25  ls
+   26  nvcc template2.cu
+   27  nvcc template.cu
+   28  vim template2.cu
+   29  ls
+   30  vim template2.cu
+   31  ls
+   32  vim Makefile
+   33  vim template2.cu
+   34  ls
+   35  git add .
+   36  git commit -m "template file compiles"
+   37  git push
+   38  git status
+   39  git log
+   40  ls
+   41  cd scott
+   42  ls
+   43  cd cs516_project2
+   44  ls
+   45  cd cs516_project2
+   46  ls
+   47  cp template2.cu thrust.cu
+   48  ls
+   49  vim Makefile
+   50  ls
+   51  rm template.cu
+   52  ls
+   53  mv template2.cu template.cu
+   54  ls
+   55  vim Makefile
+   56  make
+   57  ls
+   58  vim thrust.cu
+   59  ls
+   60  ./template 10 10
+   61  ./template 10 10 1
+   62  ./thrust 10 10 1
+   63  ls
+   64  vim thrust.cu
+   65  ls
+   66  vim thrust.cu
+   67  ls
+   68  vim thrust.cu
+   69  ls
+   70  vim thrust.cu
+   71  ls
+   72  vim thrust.cu
+   73  git add .
+   74  git commit -m "thrust sort works"
+   75  git push
+   76  ls
+   77  git log
+   78  ls
+   79  vim thrust.cu
+   80  ls
+   81  cp template.cu singlethread.cu
+   82  ls
+   83  vim singlethread.cu
+   84  ls
+   85  make
+   86  git add .
+   87  git commit -m "working bubble sort"
+   88  git push
+   89  ls
+   90  vim single_thread.cu
+   91  ls
+   92  vim singlethread.cu
+   93  git add .
+   94  git commit -m "kernel is run without errors"
+   95  git push
+   96  ls
+   97  vim singlethread.cu
+   98  ls
+   99  vim singlethread.cu
+  100  git add .
+  101  git commit -m "progress toward single threaded CUDA implementation"
+  102  git push
+  103  ls
+  104  vim singlethread.cu
+  105  ls
+  106  git add .
+  107  git commit -m "single thread CUDA program works"
+  108  git push
+  109  ls
+  110  cd scott
+  111  ls
+  112  cd cs516_project2
+  113  ls
+  114  cd cs516_project2
+  115  ls
+  116  git checkout -b create_multithread
+  117  git branch
+  118  git push --set-upstream cs516_project2 create_multithread
+  119  git push --set-upstream http://github.com/Loves-to-oop/cs516_project2 create_multithread
+  120  ls
+  121  git branch
+  122  history > history.txt
+  123  ls
+  124  vim history.txt
+  125  ls
+  126  cp singlethread.cu multithread.cu
+  127  ls
+  128  vim Makefile
+  129  make
+  130  ls
+  131  git add .
+  132  git commit -m "added multithread.cu file and also added reference to Makefile"
+  133  git push
+  134  ls
+  135  vim multithread.cu
+  136  git add .
+  137  git commit -m "created bubble sort function"
+  138  git push
+  139  ls
+  140  vim multithread.cu
+  141  ls
+  142  make
+  143  git checkout -b implement_bucket_sort
+  144  git branch
+  145  vim history.txt
+  146  git push --set-upstream http://github.com/Loves-to-oop/cs516_project2 implement_bucket_sort
+  147  git diff
+  148  ls
+  149  vim multithread.cu
+  150  git add .
+  151  git commit -m "bubble sort uses start and finished as opposed to size"
+  152  git push
+  153  ls
+  154  vim multithread.cu
+  155  ls
+  156  mv multithread.cu multithread2.cu
+  157  ls
+  158  cp singlethread.cu multithread.cu
+  159  ls
+  160  mv mulithread2.cu bucket_sort.cu
+  161  ls
+  162  mv multithread2.cu bucket_sort.cu
+  163  ls
+  164  vim Makfile
+  165  vim Makefile
+  166  make
+  167  git add .
+  168  git commit -m "moved bucket sort to own file to attempt radix sort"
+  169  git push
+  170  ls
+  171  vim multithread.cu
+  172  ls
+  173  cd scott
+  174  ls
+  175  cd cs516_project2
+  176  ls
+  177  cd cs516_project2
+  178  ls
+  179  vim multithread.cu
+  180  ls
+  181  git branch
+  182  git checkout -b implement_radix_sort
+  183  git branch
+  184  vim history.txt
+  185  ls
+  186  git push --set-upstream http://github.com/Loves-to-oop/cs516_project2 implement_radix_sort
+  187  ls
+  188  git diff
+  189  vim multithread.cu
+  190  ls
+  191  touch test.cu
+  192  ls
+  193  vim Makefile
+  194  ls
+  195  vim test.cu
+  196  ls
+  197  cd scott
+  198  ls
+  199  cd cs516_project2
+  200  ls
+  201  cd cs516_project2
+  202  ls
+  203  vim multithread.cu
+  204  ls
+  205  cd scott
+  206  ls
+  207  cd cs516_project2
+  208  ls
+  209  cd cs516_project2
+  210  ls
+  211  vim multithread.cu
+  212  git add .
+  213  git commit -m "progress on getting the grid of threads to work"
+  214  git push
+  215  ls
+  216  git branch
+  217  ls
+  218  vim multithread.cu
+  219  git add .
+  220  git commit -m "program calculates bucket to assign"
+  221  git push
+  222  ls
+  223  vim multithread.cu
+  224  git add .
+  225  git commit -m "copied 2D array to 1D array"
+  226  git push
+  227  ls
+  228  vim multithread.cu
+  229  git checkout -b implement_buckets_in_kernel_with_1D_array
+  230  git branch
+  231  git push --set-upstream http://github.com/Loves-to-oop/cs516_project2 implement_buckets_in_kernel_with_1D_array
+  232  git branch
+  233  ls
+  234  vim multithread.cu
+  235  git add .
+  236  git commit -m "some progress"
+  237  git push
+  238  ls
+  239  cd scott
+  240  ls
+  241  cd cs516_project2
+  242  ls
+  243  cd cs516_project2
+  244  ls
+  245  make
+  246  ./multithread 10 10
+  247  git diff
+  248  git branch
+  249  ls
+  250  vim multithread.cu
+  251  make
+  252  git -b checkout alter_bubble_sort
+  253  git checkout -b adjust_bubble_sort
+  254  git branch
+  255  ls
+  256  make
+  257  git push -u origin adjust_bubble_sort
+  258  ls
+  259  git branch
+  260  ls
+  261  vim multithread.cu
+  262  git add .
+  263  git commit -m "10 digit array sorted by multithreading"
+  264  git push
+  265  ls
+  266  git branch
+  267  ls
+  268  vim multithread.cu
+  269  vim singlethread.cu
+  270  vim multithread.cu
+  271  git add .
+  272  git commit -m "for some reason bubble sort on a subarray is not working."
+  273  git push
+  274  ls
+  275  cd scott
+  276  ls
+  277  cd cs516_project2
+  278  ls
+  279  cd cs516_project2
+  280  ls
+  281  vim multithread.cu
+  282  git add .
+  283  git commit -m "sort maybe works"
+  284  git push
+  285  vim multithread.cu
+  286  git add .
+  287  git commit -m "sorted numbers put in final array"
+  288  git push
+  289  git checkout -b create_unit_test_for_multithread_cu
+  290  ls
+  291  history > history2.txt

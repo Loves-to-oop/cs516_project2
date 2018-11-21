@@ -709,7 +709,7 @@ int main( int argc, char* argv[] ) {
 	int *bucket_counts = new int[number_of_buckets];
 
 
-	int bucket_memory = 1000;
+	int bucket_memory = 10000;
 
 	for(int i = 0; i <= number_of_buckets - 1; i ++)
 	{
@@ -863,6 +863,30 @@ for(int i = 1; i <= size - 1; i ++)
 {
 
 assert(host_array[i] > host_array[i - 1]); 
+
+}//end for i
+
+for(int i = 0; i <= size - 1; i ++)
+{
+	int missing_number = 1;
+
+printf("checking: %d, ", array[i]);
+
+	for(int j = 0; j <= size - 1; j ++)
+	{
+	
+	if(array[i] == host_array[j])
+	{
+	
+printf("FOUND\n");
+
+	missing_number = 0;
+	
+	}//end if
+	
+	}//end for j
+
+	assert(missing_number == 0);
 
 }//end for i
 

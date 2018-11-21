@@ -334,8 +334,22 @@ int seed;
 
 int bucket;
 
+int max_value;
+
+int * host_array;
+
+int ** array_of_buckets;
+
+int *bucket_counts;
+
+int *array_of_buckets_1D;
+
 for(int z = 0; z <= 10 - 1; z ++)
 {
+
+printf("z: %d\n", z);
+
+//int *array;
 
 size = 10;
 
@@ -344,7 +358,7 @@ seed = 10;
 	array = makeRandArray( size, seed );
 printf("array created\n");
 
-	int * host_array = (int*)malloc(size * 4);
+	host_array = (int*)malloc(size * 4);
 
 	for(int i =0; i <= size - 1; i ++)
 	{
@@ -391,9 +405,9 @@ printf("array created\n");
 
 	dim3 numBlocks(blocks_on_a_side, blocks_on_a_side);
 	
-	int ** array_of_buckets = new int*[number_of_buckets];
+	array_of_buckets = new int*[number_of_buckets];
 
-	int *bucket_counts = new int[number_of_buckets];
+	bucket_counts = new int[number_of_buckets];
 
 
 	int bucket_memory = 1000;
@@ -406,7 +420,7 @@ printf("array created\n");
 
 	}//end for i
 
-	int max_value = 0;
+	max_value = 0;
 
 
 	for(int i = 0; i <= size - 1; i ++)
@@ -460,7 +474,7 @@ printf("value: %.2f\n", ((double)array[i] / (double)(max_value + 1)) * number_of
 
 	cudaMemcpy(cuda_bucket_counts, bucket_counts, number_of_buckets * 4, cudaMemcpyHostToDevice);
 
-	int * array_of_buckets_1D = new int[size * 2];
+	array_of_buckets_1D = new int[size * 2];
 
 	int iter = 0;
 
@@ -510,6 +524,8 @@ cudaMemcpy(array_of_buckets_1D, cuda_array_of_buckets, size * 2 * 4, cudaMemcpyD
 
 cudaFree(cuda_array_of_buckets);
 
+cudaFree(cuda_bucket_counts);
+
 printf("after sort(unit test):\n");
 
 print_array(array_of_buckets_1D, iter);
@@ -546,9 +562,23 @@ printf("final array: ");
 
 		print_array_(host_array, size);
 
+free(array);
+
+free(host_array);
+
+fflush(stdout);
+
+//free(array_of_buckets);
+
+//free(bucket_counts);
+
+free(array_of_buckets_1D);
+
 		}//end for
 
+//free(array);
 
+//free(host_array);
 
 }//end function
 
@@ -584,7 +614,7 @@ int main( int argc, char* argv[] ) {
 	 */
 	// get the random numbers
 
-unit_test();
+//unit_test();
 
 	array = makeRandArray( size, seed );
 
@@ -828,6 +858,14 @@ if(array_of_buckets_1D[i] != -1)
 	std::cerr << "Total time in seconds: "
 		<< timeTotal / 1000.0 << std::endl;
 	printSorted = true;
+
+for(int i = 1; i <= size - 1; i ++)
+{
+
+assert(host_array[i] > host_array[i - 1]); 
+
+}//end for i
+
 
 	if( printSorted ){
 

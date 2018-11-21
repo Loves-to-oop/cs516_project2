@@ -238,7 +238,7 @@ int * makeRandArray( const int size, const int seed ) {
 		bool start_set = false;
 
 		bool finish_set = false;
-
+/*
 		for(int i = 0; i <= array_size - 1; i++)
 		{
 
@@ -268,7 +268,7 @@ int * makeRandArray( const int size, const int seed ) {
 			}//end if
 
 		}//end for i
-
+*/
 		//finish = finish - 2;
 
 		printf("i: %d, j: %d, current: %d, start: %d, finish: %d, bucket_start: %d, bucket_finish: %d\n", i, j, current, start, finish, bucket_starts[current],

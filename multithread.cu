@@ -105,7 +105,7 @@ __device__ void bubble_sort(int * array, int size, int start, int finish)
 if((finish - start) == 1 && array[finish] < array[start])
 {
 
-printf("swap: %d, %d\n", array[start], array[finish]);
+//printf("swap: %d, %d\n", array[start], array[finish]);
 
 int d = array[start];
 
@@ -118,12 +118,12 @@ array[finish] = d;
 	if((finish - start) > 1)
 	{
 
-printf("%d - %d > 1 \n", finish, start);
+//printf("%d - %d > 1 \n", finish, start);
 
 		for(int i = start; i <= finish; i ++)
 		{
 
-printf("i: %d\n", i);
+//printf("i: %d\n", i);
 
 			for(int j = start + 1; j <= finish; j ++)
 			{
@@ -132,7 +132,7 @@ printf("i: %d\n", i);
 				if(array[j] <  array[j - 1])
 				{
 
-					printf("swap bubble: %d %d\n", array[j - 1], array[j]);
+//					printf("swap bubble: %d %d\n", array[j - 1], array[j]);
 
 					int c = array[j - 1];
 
@@ -224,9 +224,9 @@ int * makeRandArray( const int size, const int seed ) {
 
 		int current = i + (j * threads_on_a_side);
 
-		printf("%d = %d + (%d * %d)\n", current, i, j, threads_on_a_side);
+//		printf("%d = %d + (%d * %d)\n", current, i, j, threads_on_a_side);
 
-		printf("current bucket size: %d\n", bucket_counts[current]);
+//		printf("current bucket size: %d\n", bucket_counts[current]);
 
 		int bucket = 0;
 
@@ -270,19 +270,22 @@ int * makeRandArray( const int size, const int seed ) {
 
 		//finish = finish - 2;
 
-		printf("current: %d, start: %d, finish: %d\n", current, start, finish);
+//		printf("current: %d, start: %d, finish: %d\n", current, start, finish);
 
 		if(start < finish)
 		{
 			if(current == 1)
-			{printf("before: ");
-				print_array_device(array_of_buckets, array_size);
+			{
+				//printf("before: ");
+				//print_array_device(array_of_buckets, array_size);
 			}
 			bubble_sort(array_of_buckets, size, start, finish);
 			if(current == 1)
-			{printf("after: ");
-				print_array_device(array_of_buckets, array_size);
-			}}//end if
+			{
+				//printf("after: ");
+				//print_array_device(array_of_buckets, array_size);
+			}
+		}//end if
 
 		//print_array_device(array_of_buckets, array_size);
 
@@ -474,7 +477,7 @@ printf("value: %.2f\n", ((double)array[i] / (double)(max_value + 1)) * number_of
 
 	cudaMemcpy(cuda_bucket_counts, bucket_counts, number_of_buckets * 4, cudaMemcpyHostToDevice);
 
-	array_of_buckets_1D = new int[size * 2];
+	array_of_buckets_1D = new int[size * 10];
 
 	int iter = 0;
 
@@ -511,9 +514,9 @@ printf("value: %.2f\n", ((double)array[i] / (double)(max_value + 1)) * number_of
 	int * cuda_array_of_buckets;
 
 
-	cudaMalloc(&cuda_array_of_buckets, size * 2 * 4);
+	cudaMalloc(&cuda_array_of_buckets, size * 10);
 
-	cudaMemcpy(cuda_array_of_buckets, array_of_buckets_1D, size * 2 * 4
+	cudaMemcpy(cuda_array_of_buckets, array_of_buckets_1D, size * 10
 			, cudaMemcpyHostToDevice);
 
 	matavgKernel <<< numBlocks, threadsPerBlock >>> 
@@ -676,17 +679,17 @@ int main( int argc, char* argv[] ) {
 
 	int diameter = sqrt(total_threads) + 1;
 
-	printf("total threads: %d, diameter: %d\n", total_threads, diameter);
+//	printf("total threads: %d, diameter: %d\n", total_threads, diameter);
 
 	int number_of_digits = 32;
 
 	int threads_on_a_side = diameter / 2;
 
-	printf("threads_on_a_side: %d\n", threads_on_a_side);
+//	printf("threads_on_a_side: %d\n", threads_on_a_side);
 
 	int blocks_on_a_side = (diameter / threads_on_a_side) + 1;
 
-	printf("blocks_on_a_side: %d\n", blocks_on_a_side);
+//	printf("blocks_on_a_side: %d\n", blocks_on_a_side);
 
 	int number_of_threads = pow(blocks_on_a_side * threads_on_a_side, 2);
 
@@ -696,7 +699,7 @@ int main( int argc, char* argv[] ) {
 
 	int number_of_buckets = number_of_threads;
 
-	printf("number of threads: %d, buckets: %d\n", number_of_threads, number_of_buckets);
+//	printf("number of threads: %d, buckets: %d\n", number_of_threads, number_of_buckets);
 
 	dim3 threadsPerBlock(threads_on_a_side, threads_on_a_side);
 
@@ -704,7 +707,7 @@ int main( int argc, char* argv[] ) {
 
 	//int ** array_of_buckets = new int[number_of_buckets][size];
 
-	int ** array_of_buckets = new int*[number_of_buckets];
+	int ** array_of_buckets = new int*[number_of_buckets * 2];
 
 	int *bucket_counts = new int[number_of_buckets];
 
@@ -739,20 +742,22 @@ int main( int argc, char* argv[] ) {
 
 		int bucket = ((double)array[i] / (double)(max_value + 1)) * number_of_buckets;
 
-		printf("array[i]: %d, bucket: %d, ", array[i], bucket);
+//		printf("array[i]: %d, bucket: %d, ", array[i], bucket);
 
-		printf("array[i] / max_value: %f, ", (double)array[i] / (double)(max_value + 1)); 
+//		printf("array[i] / max_value: %f, ", (double)array[i] / (double)(max_value + 1)); 
 
 		array_of_buckets[bucket][bucket_counts[bucket]] = array[i]; 
 
-		printf("value_in_array: %d, ", array_of_buckets[bucket][bucket_counts[bucket]]);
+//		printf("value_in_array: %d, ", array_of_buckets[bucket][bucket_counts[bucket]]);
 
 		bucket_counts[bucket] ++;
 
-		printf("bucket count: %d, %d\n", 
-				bucket_counts[bucket], 
-				array_of_buckets[bucket][bucket_counts[bucket] - 1]);
+//		printf("bucket count: %d, %d\n", 
+//				bucket_counts[bucket], 
+//				array_of_buckets[bucket][bucket_counts[bucket] - 1]);
 
+
+		fflush(stdout);
 
 	}//end for i
 
@@ -763,7 +768,9 @@ int main( int argc, char* argv[] ) {
 
 	cudaMemcpy(cuda_bucket_counts, bucket_counts, number_of_buckets * 4, cudaMemcpyHostToDevice);
 
-	int * array_of_buckets_1D = new int[size * 2];
+int array_of_buckets_1D_size = size * 10;
+
+	int * array_of_buckets_1D = new int[size * 10];
 
 	int iter = 0;
 
@@ -802,7 +809,7 @@ int main( int argc, char* argv[] ) {
 
 	cudaMalloc(&cuda_array_of_buckets, size * 2 * 4);
 
-	cudaMemcpy(cuda_array_of_buckets, array_of_buckets_1D, size * 2 * 4
+	cudaMemcpy(cuda_array_of_buckets, array_of_buckets_1D, size * 10
 			, cudaMemcpyHostToDevice);
 
 	matavgKernel <<< numBlocks, threadsPerBlock >>> 
@@ -813,7 +820,7 @@ int main( int argc, char* argv[] ) {
 
 //int *buckets_returned;
 
-cudaMemcpy(array_of_buckets_1D, cuda_array_of_buckets, size * 2 * 4, cudaMemcpyDeviceToHost);
+cudaMemcpy(array_of_buckets_1D, cuda_array_of_buckets, size * 10, cudaMemcpyDeviceToHost);
 
 cudaFree(cuda_array_of_buckets);
 
@@ -899,6 +906,12 @@ printf("FOUND\n");
 		/// Your code to print the sorted array here //
 		///////////////////////////////////////////////
 	}//end if 
+
+free(host_array);
+
+free(array);
+
+
 
 
 }//end main

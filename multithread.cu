@@ -238,54 +238,9 @@ int * makeRandArray( const int size, const int seed ) {
 		bool start_set = false;
 
 		bool finish_set = false;
-/*
-		for(int i = 0; i <= array_size - 1; i++)
-		{
-
-
-			//printf("%d, ", array_of_buckets[i]);
-
-			if(array_of_buckets[i] == -1)
-				bucket ++;
-
-			if(bucket == current && start_set == false)
-			{
-				start = i;
-				if(start != 0)
-					start ++;
-
-				start_set = true;
-			}//end if
-
-			if(bucket == current + 1 && finish_set == false)
-			{
-
-				finish = i - 1;
-
-				finish_set = true;
-
-
-			}//end if
-
-		}//end for i
-*/
-		//finish = finish - 2;
 
 		printf("i: %d, j: %d, current: %d, start: %d, finish: %d, bucket_start: %d, bucket_finish: %d\n", i, j, current, start, finish, bucket_starts[current],
 				bucket_finishes[current]);
-/*
-		if(start < finish)
-		{
-			if(current == 1)
-			{printf("before: ");
-				print_array_device(array_of_buckets, array_size);
-			}
-			bubble_sort(array_of_buckets, size, start, finish);
-			if(current == 1)
-			{printf("after: ");
-				print_array_device(array_of_buckets, array_size);
-			}}//end if
-*/
 
 		if(bucket_starts[current] != -1)
 		{
@@ -293,14 +248,6 @@ int * makeRandArray( const int size, const int seed ) {
 		bubble_sort(array_of_buckets, size, bucket_starts[current], bucket_finishes[current]);
 
 		}//end if
-
-		//print_array_device(array_of_buckets, array_size);
-
-
-		//print_array_device(array_of_buckets[current], bucket_counts[current]);
-
-		//bubble_sort(array_of_buckets[current], bucket_counts[current]);
-
 
 
 	}//end function
@@ -628,7 +575,9 @@ cudaMemcpy(cuda_bucket_finishes, bucket_finishes, number_of_threads * 10,
 	for(int i = 1; i <= size - 1; i ++)
 	{
 
-		assert(host_array[i] > host_array[i - 1]); 
+printf("%d >= %d\n", host_array[i], host_array[i - 1]);
+
+		assert(host_array[i] >= host_array[i - 1]); 
 
 	}//end for i
 

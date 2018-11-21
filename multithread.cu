@@ -380,8 +380,17 @@ printf("array created\n");
 	cudaMalloc(&cuda_array, size * 4);
 
 	cudaMemcpy(cuda_array, host_array, size * 4, cudaMemcpyHostToDevice);
-	int total_threads = (size / 10);
 	
+	
+	int total_threads = (size / 10);
+
+if(total_threads > 48)
+{
+
+	total_threads = 48;
+
+}//end if
+
 	int diameter = sqrt(total_threads) + 1;
 
 	printf("total threads: %d, diameter: %d\n", total_threads, diameter);
@@ -410,7 +419,7 @@ printf("array created\n");
 	bucket_counts = new int[number_of_buckets];
 
 
-	int bucket_memory = 1000;
+	int bucket_memory = 100000;
 
 	for(int i = 0; i <= number_of_buckets - 1; i ++)
 	{
@@ -474,7 +483,9 @@ printf("value: %.2f\n", ((double)array[i] / (double)(max_value + 1)) * number_of
 
 	cudaMemcpy(cuda_bucket_counts, bucket_counts, number_of_buckets * 4, cudaMemcpyHostToDevice);
 
-	array_of_buckets_1D = new int[size * 2];
+size_t array_of_buckets_1D_size = size * 2;
+
+	array_of_buckets_1D = new int[array_of_buckets_1D_size];
 
 	int iter = 0;
 
@@ -603,22 +614,12 @@ int main( int argc, char* argv[] ) {
 	} {
 		std::stringstream ss1( argv[2] ); 
 		ss1 >> seed; }
-	/*
-	   {
-	   int sortPrint;
-	   std::stringstream ss1( argv[2] ); 
-	   ss1 >> sortPrint;
-	   if( sortPrint == 1 )
-	   printSorted = true;
-	   }
-	 */
-	// get the random numbers
 
 //unit_test();
 
 	array = makeRandArray( size, seed );
 
-	int * host_array = (int*)malloc(size * 4);
+	int * host_array = (int*)malloc(size * 10);
 
 	for(int i =0; i <= size - 1; i ++)
 	{
@@ -639,40 +640,16 @@ int main( int argc, char* argv[] ) {
 	///////////////////////  YOUR CODE HERE       ///////////////////////
 	/////////////////////////////////////////////////////////////////////
 
-	//curandState* devRandomGeneratorStateArray;
-	//  cudaMalloc ( &devRandomGeneratorStateArray, 1*sizeof( curandState ) );
-
-	//bubble_sort(array, size);
-
-	//    thrust::host_vector<int> hostCounts(1,  0);
-	//  thrust::device_vector<int> deviceCounts(hostCounts);
-
 	int * cuda_array;
 
 	cudaMalloc(&cuda_array, size * 4);
 
 	cudaMemcpy(cuda_array, host_array, size * 4, cudaMemcpyHostToDevice);
 
-	//matavgKernel <<< 1, 1 >>> (array, size); 
-
-	/*
-
-	   This is saying the threadid within a small block, plus the current block
-	   in the x direction * the size of each block in the x direction to give
-	   the address in the larger x direction.
-
-	//threadIdx.x + (blockDim.x * blockIdx.x);
-
-	//divide the array into buckets based on thread number.
-
-	 */
-
-	//int numBlocks = 1;
-
 	int total_threads = (size / 10);
 
-	//if(total_threads == 0)
-	//	total_threads = 1;
+if(total_threads > 48)
+total_threads = 48;
 
 	int diameter = sqrt(total_threads) + 1;
 
@@ -689,11 +666,6 @@ int main( int argc, char* argv[] ) {
 	printf("blocks_on_a_side: %d\n", blocks_on_a_side);
 
 	int number_of_threads = pow(blocks_on_a_side * threads_on_a_side, 2);
-
-	//number_of_threads is the same as the number_of_buckets
-
-	//test to see that number_of_buckets is always less than the size of the initial array.
-
 	int number_of_buckets = number_of_threads;
 
 	printf("number of threads: %d, buckets: %d\n", number_of_threads, number_of_buckets);
@@ -701,8 +673,6 @@ int main( int argc, char* argv[] ) {
 	dim3 threadsPerBlock(threads_on_a_side, threads_on_a_side);
 
 	dim3 numBlocks(blocks_on_a_side, blocks_on_a_side);
-
-	//int ** array_of_buckets = new int[number_of_buckets][size];
 
 	int ** array_of_buckets = new int*[number_of_buckets];
 
@@ -763,7 +733,9 @@ int main( int argc, char* argv[] ) {
 
 	cudaMemcpy(cuda_bucket_counts, bucket_counts, number_of_buckets * 4, cudaMemcpyHostToDevice);
 
-	int * array_of_buckets_1D = new int[size * 2];
+size_t array_of_buckets_1D_size = size * 10;
+
+	int * array_of_buckets_1D = new int[array_of_buckets_1D_size];
 
 	int iter = 0;
 
@@ -800,20 +772,16 @@ int main( int argc, char* argv[] ) {
 	int * cuda_array_of_buckets;
 
 
-	cudaMalloc(&cuda_array_of_buckets, size * 2 * 4);
+	cudaMalloc(&cuda_array_of_buckets, array_of_buckets_1D_size);
 
-	cudaMemcpy(cuda_array_of_buckets, array_of_buckets_1D, size * 2 * 4
+	cudaMemcpy(cuda_array_of_buckets, array_of_buckets_1D, array_of_buckets_1D_size
 			, cudaMemcpyHostToDevice);
 
 	matavgKernel <<< numBlocks, threadsPerBlock >>> 
 		(cuda_array, size, blocks_on_a_side, 
 		 number_of_threads, cuda_array_of_buckets, iter, cuda_bucket_counts); 
 
-//print_array_device(cuda_array_of_buckets, size);
-
-//int *buckets_returned;
-
-cudaMemcpy(array_of_buckets_1D, cuda_array_of_buckets, size * 2 * 4, cudaMemcpyDeviceToHost);
+cudaMemcpy(array_of_buckets_1D, cuda_array_of_buckets, array_of_buckets_1D_size, cudaMemcpyDeviceToHost);
 
 cudaFree(cuda_array_of_buckets);
 

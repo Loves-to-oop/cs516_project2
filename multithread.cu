@@ -340,7 +340,9 @@ int main( int argc, char* argv[] ) {
 	int total_threads = (size / 10);
 
 	if(total_threads > 48)
-		total_threads = 48;
+	{
+	//	total_threads = 48;
+	}//end if
 
 	int diameter = sqrt(total_threads) + 1;
 
@@ -348,13 +350,18 @@ int main( int argc, char* argv[] ) {
 
 	int number_of_digits = 32;
 
-	int threads_on_a_side = diameter / 2;
+	int threads_on_a_side = diameter / 5;
 
 	printf("threads_on_a_side: %d\n", threads_on_a_side);
+
+printf("threads per block: %f\n", pow(threads_on_a_side, 2));
 
 	int blocks_on_a_side = (diameter / threads_on_a_side) + 1;
 
 	printf("blocks_on_a_side: %d\n", blocks_on_a_side);
+
+
+printf("blocks_per_grid: %f\n", pow(blocks_on_a_side, 2));
 
 	int number_of_threads = pow(blocks_on_a_side * threads_on_a_side, 2);
 	int number_of_buckets = number_of_threads;

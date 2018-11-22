@@ -105,7 +105,7 @@ __device__ void bubble_sort(int * array, int size, int start, int finish)
 	if((finish - start) == 1 && array[finish] < array[start])
 	{
 
-		printf("swap: %d, %d\n", array[start], array[finish]);
+	//	printf("swap: %d, %d\n", array[start], array[finish]);
 
 		int d = array[start];
 
@@ -118,12 +118,12 @@ __device__ void bubble_sort(int * array, int size, int start, int finish)
 	if((finish - start) > 1)
 	{
 
-		printf("%d - %d > 1 \n", finish, start);
+	//	printf("%d - %d > 1 \n", finish, start);
 
 		for(int i = start; i <= finish; i ++)
 		{
 
-			printf("i: %d\n", i);
+	//		printf("i: %d\n", i);
 
 			for(int j = start + 1; j <= finish; j ++)
 			{
@@ -132,7 +132,7 @@ __device__ void bubble_sort(int * array, int size, int start, int finish)
 				if(array[j] <  array[j - 1])
 				{
 
-					printf("swap bubble: %d %d\n", array[j - 1], array[j]);
+	//				printf("swap bubble: %d %d\n", array[j - 1], array[j]);
 
 					int c = array[j - 1];
 
@@ -225,9 +225,9 @@ int * makeRandArray( const int size, const int seed ) {
 
 		int current = i + (j * threads_on_a_side);
 
-		printf("%d = %d + (%d * %d)\n", current, i, j, threads_on_a_side);
+	//	printf("%d = %d + (%d * %d)\n", current, i, j, threads_on_a_side);
 
-		printf("current bucket size: %d\n", bucket_counts[current]);
+	//	printf("current bucket size: %d\n", bucket_counts[current]);
 
 		int bucket = 0;
 
@@ -239,8 +239,8 @@ int * makeRandArray( const int size, const int seed ) {
 
 		bool finish_set = false;
 
-		printf("i: %d, j: %d, current: %d, start: %d, finish: %d, bucket_start: %d, bucket_finish: %d\n", i, j, current, start, finish, bucket_starts[current],
-				bucket_finishes[current]);
+	//	printf("i: %d, j: %d, current: %d, start: %d, finish: %d, bucket_start: %d, bucket_finish: %d\n", i, j, current, start, finish, bucket_starts[current],
+				//bucket_finishes[current]);
 
 		if(bucket_starts[current] != -1)
 		{
@@ -319,11 +319,11 @@ int main( int argc, char* argv[] ) {
 
 	}//end for i
 
-	print_array(array, size);
+	//print_array(array, size);
 
-	printf("host_array\n");
+	//printf("host_array\n");
 
-	print_array(host_array, size);
+	//print_array(host_array, size);
 
 	cudaEvent_t startTotal, stopTotal; float timeTotal; cudaEventCreate(&startTotal); cudaEventCreate(&stopTotal); cudaEventRecord( startTotal, 0 );
 
@@ -346,7 +346,7 @@ int main( int argc, char* argv[] ) {
 
 	int diameter = sqrt(total_threads) + 1;
 
-	printf("total threads: %d, diameter: %d\n", total_threads, diameter);
+	printf("estimated threads: %d, diameter: %d\n", total_threads, diameter);
 
 	int number_of_digits = 32;
 
@@ -420,19 +420,19 @@ printf("blocks_per_grid: %f\n", pow(blocks_on_a_side, 2));
 
 		int bucket = ((double)array[i] / (double)(max_value + 1)) * number_of_buckets;
 
-		printf("array[i]: %d, bucket: %d, ", array[i], bucket);
+	//	printf("array[i]: %d, bucket: %d, ", array[i], bucket);
 
-		printf("array[i] / max_value: %f, ", (double)array[i] / (double)(max_value + 1)); 
+	//	printf("array[i] / max_value: %f, ", (double)array[i] / (double)(max_value + 1)); 
 
 		array_of_buckets[bucket][bucket_counts[bucket]] = array[i]; 
 
-		printf("value_in_array: %d, ", array_of_buckets[bucket][bucket_counts[bucket]]);
+	//	printf("value_in_array: %d, ", array_of_buckets[bucket][bucket_counts[bucket]]);
 
 		bucket_counts[bucket] ++;
 
-		printf("bucket count: %d, %d\n", 
-				bucket_counts[bucket], 
-				array_of_buckets[bucket][bucket_counts[bucket] - 1]);
+	//	printf("bucket count: %d, %d\n", 
+//				bucket_counts[bucket], 
+//				array_of_buckets[bucket][bucket_counts[bucket] - 1]);
 
 
 	}//end for i
@@ -473,7 +473,7 @@ bucket_finishes[curr_bucket2] = -1;
 
 				bucket_starts[curr_bucket] = iter;
 
-				printf("bucket_starts[%d] = %d\n", curr_bucket, iter);
+	//			printf("bucket_starts[%d] = %d\n", curr_bucket, iter);
 
 				//	curr_bucket ++;
 
@@ -484,7 +484,7 @@ bucket_finishes[curr_bucket2] = -1;
 
 				bucket_finishes[curr_bucket2] = iter;
 
-				printf("bucket_finishes[%d] = %d\n", curr_bucket2, iter);
+	//			printf("bucket_finishes[%d] = %d\n", curr_bucket2, iter);
 
 				//curr_bucket2 ++;
 
@@ -509,6 +509,7 @@ bucket_finishes[curr_bucket2] = -1;
 
 	}//end for i
 
+/*
 	for(int i = 0; i <= iter - 1; i ++)
 	{
 
@@ -516,7 +517,7 @@ bucket_finishes[curr_bucket2] = -1;
 
 
 	}//end for i
-
+*/
 
 	int * cuda_array_of_buckets;
 
@@ -550,9 +551,9 @@ cudaMemcpy(cuda_bucket_finishes, bucket_finishes, number_of_threads * 10,
 
 	cudaFree(cuda_array_of_buckets);
 
-	printf("after sort:\n");
+//	printf("after sort:\n");
 
-	print_array(array_of_buckets_1D, iter);
+//	print_array(array_of_buckets_1D, iter);
 
 	cudaMemcpy(host_array, cuda_array, size * 4, cudaMemcpyDeviceToHost);
 
@@ -595,7 +596,7 @@ cudaMemcpy(cuda_bucket_finishes, bucket_finishes, number_of_threads * 10,
 	for(int i = 1; i <= size - 1; i ++)
 	{
 
-printf("%d >= %d\n", host_array[i], host_array[i - 1]);
+//printf("%d >= %d\n", host_array[i], host_array[i - 1]);
 
 		assert(host_array[i] >= host_array[i - 1]); 
 
@@ -605,7 +606,7 @@ printf("%d >= %d\n", host_array[i], host_array[i - 1]);
 	{
 		int missing_number = 1;
 
-		printf("checking: %d, ", array[i]);
+//		printf("checking: %d, ", array[i]);
 
 		for(int j = 0; j <= size - 1; j ++)
 		{
@@ -613,7 +614,7 @@ printf("%d >= %d\n", host_array[i], host_array[i - 1]);
 			if(array[i] == host_array[j])
 			{
 
-				printf("FOUND\n");
+//				printf("FOUND\n");
 
 				missing_number = 0;
 

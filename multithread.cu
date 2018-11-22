@@ -285,6 +285,48 @@ void unit_test()
 }//end function
 
 
+void check_sorted(int * host_array, int * array, int size)
+{
+
+	for(int i = 1; i <= size - 1; i ++)
+	{
+
+//printf("%d >= %d\n", host_array[i], host_array[i - 1]);
+
+		assert(host_array[i] >= host_array[i - 1]); 
+
+	}//end for i
+
+printf("sorted order\n");
+
+	for(int i = 0; i <= size - 1; i ++)
+	{
+		int missing_number = 1;
+
+//		printf("checking: %d, ", array[i]);
+
+		for(int j = 0; j <= size - 1; j ++)
+		{
+
+			if(array[i] == host_array[j])
+			{
+
+//				printf("FOUND\n");
+
+				missing_number = 0;
+
+			}//end if
+
+		}//end for j
+
+		assert(missing_number == 0);
+
+	}//end for i
+
+	printf("none missing\n");
+
+}//end function
+
 int main( int argc, char* argv[] ) {
 	int * array; // the poitner to the array of rands 
 	int size, seed; // values for the size of the array 
@@ -337,7 +379,14 @@ int main( int argc, char* argv[] ) {
 
 	cudaMemcpy(cuda_array, host_array, size * 4, cudaMemcpyHostToDevice);
 
-	int total_threads = (size / 10);
+	int total_threads = (size / 100);
+
+	if(total_threads == 0)
+	{
+	
+		total_threads = 1;
+	
+	}//end if
 
 	if(total_threads > 48)
 	{
@@ -350,7 +399,7 @@ int main( int argc, char* argv[] ) {
 
 	int number_of_digits = 32;
 
-	int threads_on_a_side = diameter / 5;
+	int threads_on_a_side = diameter / 100;
 
 if(threads_on_a_side == 0)
 {
@@ -592,7 +641,7 @@ cudaMemcpy(cuda_bucket_finishes, bucket_finishes, number_of_threads * 10,
 	std::cerr << "Total time in seconds: "
 		<< timeTotal / 1000.0 << std::endl;
 	printSorted = true;
-
+/*
 	for(int i = 1; i <= size - 1; i ++)
 	{
 
@@ -625,11 +674,13 @@ cudaMemcpy(cuda_bucket_finishes, bucket_finishes, number_of_threads * 10,
 		assert(missing_number == 0);
 
 	}//end for i
+*/
 
+check_sorted(host_array, array, size);
 
 	if( printSorted ){
 
-		print_array_(host_array, size);
+//		print_array_(host_array, size);
 
 		///////////////////////////////////////////////
 		/// Your code to print the sorted array here //

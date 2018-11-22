@@ -352,6 +352,13 @@ int main( int argc, char* argv[] ) {
 
 	int threads_on_a_side = diameter / 5;
 
+if(threads_on_a_side == 0)
+{
+
+	threads_on_a_side = 1;
+
+}//end if
+
 	printf("threads_on_a_side: %d\n", threads_on_a_side);
 
 printf("threads per block: %f\n", pow(threads_on_a_side, 2));
@@ -376,6 +383,12 @@ printf("blocks_per_grid: %f\n", pow(blocks_on_a_side, 2));
 
 	int *bucket_counts = new int[number_of_buckets];
 
+	for(int i = 0; i <= number_of_buckets - 1; i ++)
+{
+
+	bucket_counts[i] = 0;
+
+}
 
 	int bucket_memory = 10000;
 

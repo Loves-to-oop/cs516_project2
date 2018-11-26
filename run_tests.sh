@@ -23,7 +23,7 @@ do
 
 	ts=$(date +%s%N) ; 
 
-	./multithread $i 10
+	./multithread $i 10 1
 				
 	tt_qss=$((($(date +%s%N) - $ts)/1000000)) ;
 

@@ -238,11 +238,11 @@ int main( int argc, char* argv[] ) {
 	
 	}//end for i
 
-	print_array(array, size);
+	//print_array(array, size);
 
-printf("host_array\n");
+//printf("host_array\n");
 
-print_array(host_array, size);
+//print_array(host_array, size);
 
 	cudaEvent_t startTotal, stopTotal; float timeTotal; cudaEventCreate(&startTotal); cudaEventCreate(&stopTotal); cudaEventRecord( startTotal, 0 );
 
@@ -294,9 +294,15 @@ print_array(host_array, size);
 	/***********************************
 	  end of cuda timer destruction
 	 **********************************/
+	
+	
+if(argc == 3)
+{
+	
 	std::cerr << "Total time in seconds: "
 		<< timeTotal / 1000.0 << std::endl;
 	printSorted = true;
+
 
 	if( printSorted ){
 
@@ -313,4 +319,7 @@ print_array(host_array, size);
 		///////////////////////////////////////////////
 		/// Your code to print the sorted array here //
 		///////////////////////////////////////////////
-	} }
+	}//end if 
+}//end if
+
+}//end main

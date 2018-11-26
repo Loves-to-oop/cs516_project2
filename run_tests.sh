@@ -1,4 +1,4 @@
-echo "size, bbs, bbp, qss, qsp, mss, msp, reference" > result.csv
+echo "size, thrust, singlethread, multithread" > result.csv
 echo "size, thrust" > thrust_result.csv
 echo "size, singlethread" > singlethread_result.csv
 echo "size, multithread" > multithread_result.csv
@@ -7,17 +7,17 @@ echo "size, multithread" > multithread_result.csv
 
 #for ((i = 10; i <= 10000; i+=100))
 
-i=10; while [ $i -le 10000 ]; 
+i=10; while [ $i -le 5000 ]; 
 do
 	ts=$(date +%s%N) ; 
 
-	./thrust $i 10
+	./thrust $i 10 1
 				
 	tt=$((($(date +%s%N) - $ts)/1000000)) ;
 
 	ts=$(date +%s%N) ; 
 
-	./singlethread $i 10
+	./singlethread $i 10 1
 				
 	tt_bbp=$((($(date +%s%N) - $ts)/1000000)) ;
 

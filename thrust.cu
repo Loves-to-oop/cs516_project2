@@ -147,6 +147,10 @@ int main( int argc, char* argv[] ) {
 	/***********************************
 	  end of cuda timer destruction
 	 **********************************/
+	
+	if(argc == 3)
+	{
+	
 	std::cerr << "Total time in seconds: "
 		<< timeTotal / 1000.0 << std::endl;
 	
@@ -169,4 +173,8 @@ std::cout << "\n";
 		///////////////////////////////////////////////
 		/// Your code to print the sorted array here //
 		///////////////////////////////////////////////
-	} }
+	}//end if 
+
+}//end if
+
+}//end main

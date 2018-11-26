@@ -7,7 +7,7 @@ echo "size, multithread" > multithread_result.csv
 
 #for ((i = 10; i <= 10000; i+=100))
 
-i=10; while [ $i -le 1000000 ]; 
+i=10; while [ $i -le 10000 ]; 
 do
 	ts=$(date +%s%N) ; 
 
@@ -35,5 +35,5 @@ do
 	echo "$i, $tt" >> thrust_result.csv
 	echo "$i, $tt_bbp" >> singlethread_result.csv
 	echo "$i, $tt_qss" >> multithread_result.csv
-	i=$((i+10000));
+	i=$((i+100));
 done

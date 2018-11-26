@@ -306,7 +306,7 @@ if(argc == 3)
 
 	if( printSorted ){
 
-
+/*
 		for(int i = 0; i <= size - 1; i ++)
 		{
 
@@ -315,7 +315,7 @@ if(argc == 3)
 		}//end for i
 
 		printf("\n");
-
+*/
 		///////////////////////////////////////////////
 		/// Your code to print the sorted array here //
 		///////////////////////////////////////////////

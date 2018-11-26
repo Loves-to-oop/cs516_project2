@@ -159,7 +159,7 @@ int main( int argc, char* argv[] ) {
 	
 	if( printSorted ){
 
-
+/*
 for(int i = 0; i <= size - 1; i ++)
 {
 
@@ -169,7 +169,7 @@ for(int i = 0; i <= size - 1; i ++)
 }//end for i
 
 std::cout << "\n";
-
+*/
 		///////////////////////////////////////////////
 		/// Your code to print the sorted array here //
 		///////////////////////////////////////////////

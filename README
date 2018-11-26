@@ -1,0 +1,15 @@
+To compile:
+
+make
+
+To run:
+
+./program array_size seed
+
+Example:
+
+./singlethread 1000 10
+
+./thrust 1000 10
+
+./multithread 1000 10

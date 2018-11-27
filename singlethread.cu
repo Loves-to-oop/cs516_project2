@@ -197,6 +197,50 @@ int * makeRandArray( const int size, const int seed ) {
 
 	}//end function
 
+
+void check_sorted(int * host_array, int * array, int size)
+{
+
+	for(int i = 1; i <= size - 1; i ++)
+	{
+
+		//printf("%d >= %d\n", host_array[i], host_array[i - 1]);
+
+		assert(host_array[i] >= host_array[i - 1]); 
+
+	}//end for i
+
+	printf("sorted order\n");
+
+	for(int i = 0; i <= size - 1; i ++)
+	{
+		int missing_number = 1;
+
+		//		printf("checking: %d, ", array[i]);
+
+		for(int j = 0; j <= size - 1; j ++)
+		{
+
+			if(array[i] == host_array[j])
+			{
+
+				//				printf("FOUND\n");
+
+				missing_number = 0;
+
+			}//end if
+
+		}//end for j
+
+		assert(missing_number == 0);
+
+	}//end for i
+
+	printf("none missing\n");
+
+}//end function
+
+
 int main( int argc, char* argv[] ) {
 	int * array; // the poitner to the array of rands 
 	int size, seed; // values for the size of the array 
@@ -217,15 +261,7 @@ int main( int argc, char* argv[] ) {
 	} {
 		std::stringstream ss1( argv[2] ); 
 		ss1 >> seed; }
-	/*
-	   {
-	   int sortPrint;
-	   std::stringstream ss1( argv[2] ); 
-	   ss1 >> sortPrint;
-	   if( sortPrint == 1 )
-	   printSorted = true;
-	   }
-	 */
+	
 	// get the random numbers
 	array = makeRandArray( size, seed );
 
@@ -250,13 +286,6 @@ int main( int argc, char* argv[] ) {
 	///////////////////////  YOUR CODE HERE       ///////////////////////
 	/////////////////////////////////////////////////////////////////////
 
-	//curandState* devRandomGeneratorStateArray;
-	//  cudaMalloc ( &devRandomGeneratorStateArray, 1*sizeof( curandState ) );
-
-	//bubble_sort(array, size);
-
-	//    thrust::host_vector<int> hostCounts(1,  0);
-	//  thrust::device_vector<int> deviceCounts(hostCounts);
 
 	int * cuda_array;
 
@@ -264,7 +293,6 @@ int main( int argc, char* argv[] ) {
 
 	cudaMemcpy(cuda_array, host_array, size * 4, cudaMemcpyHostToDevice);
 
-	//matavgKernel <<< 1, 1 >>> (array, size); 
 
 	matavgKernel <<< 1, 1 >>> (cuda_array, size); 
 
@@ -273,14 +301,6 @@ int main( int argc, char* argv[] ) {
 	cudaFree(cuda_array);
 
 	//https://stackoverflow.com/questions/6419700/way-to-verify-kernel-was-executed-in-cuda
-	/*
-	   cudaError_t err = cudaGetLastError();
-	   if (err != cudaSuccess) 
-	   printf("Error: %s\n", cudaGetErrorString(err));
-
-	//thrust::reduce(deviceCounts.begin(), deviceCounts.end(), 0, thrust::plus<int>());;
-	 */
-	//matavgKerenel(array, size);
 
 	/***********************************
 	 *
@@ -304,6 +324,8 @@ if(argc == 3)
 	printSorted = true;
 
 
+//check_sorted(host_array, array, size);
+
 	if( printSorted ){
 
 /*
@@ -316,6 +338,7 @@ if(argc == 3)
 
 		printf("\n");
 */
+
 		///////////////////////////////////////////////
 		/// Your code to print the sorted array here //
 		///////////////////////////////////////////////

@@ -12,10 +12,6 @@
 #include <bits/stdc++.h>
 
 /*
-#include "cuPrintf.cu"`
- */
-
-/*
 
    Working on using a 1D array to store the 2D buckets.
    Working in the kernel on calculating the start and finish
@@ -105,7 +101,6 @@ __device__ void bubble_sort(int * array, int size, int start, int finish)
 	if((finish - start) == 1 && array[finish] < array[start])
 	{
 
-		//	printf("swap: %d, %d\n", array[start], array[finish]);
 
 		int d = array[start];
 
@@ -118,12 +113,10 @@ __device__ void bubble_sort(int * array, int size, int start, int finish)
 	if((finish - start) > 1)
 	{
 
-		//	printf("%d - %d > 1 \n", finish, start);
 
 		for(int i = start; i <= finish; i ++)
 		{
 
-			//		printf("i: %d\n", i);
 
 			for(int j = start + 1; j <= finish; j ++)
 			{
@@ -132,7 +125,6 @@ __device__ void bubble_sort(int * array, int size, int start, int finish)
 				if(array[j] <  array[j - 1])
 				{
 
-					//				printf("swap bubble: %d %d\n", array[j - 1], array[j]);
 
 					int c = array[j - 1];
 
@@ -140,12 +132,8 @@ __device__ void bubble_sort(int * array, int size, int start, int finish)
 
 					array[j] = c;
 
-					//printf("%d %d\n\n", array[j - 1], array[j]);
 
 				}//end if
-
-
-
 
 			}//end for j
 
@@ -201,22 +189,9 @@ int * makeRandArray( const int size, const int seed ) {
 	return array; }
 
 
-	/*
-
-	   Kernel is fuction to run on GPU.
-
-	 */
-
-
-
 	__global__ void matavgKernel(int * array, int size, int blocks_on_a_side, 
 			int number_of_threads, int *array_of_buckets, int array_size, int * bucket_counts,
 			int * bucket_starts, int * bucket_finishes) {
-
-		//printf("blockdim.x: %d\n", blockDim.x);
-
-
-		//i is what number, j is what digit to sort, then sort based on digit..
 
 		int i = threadIdx.x + blockDim.x * blockIdx.x;
 		int j = threadIdx.y + blockDim.y * blockIdx.y;
@@ -225,23 +200,7 @@ int * makeRandArray( const int size, const int seed ) {
 
 		int current = i + (j * threads_on_a_side);
 
-		//	printf("%d = %d + (%d * %d)\n", current, i, j, threads_on_a_side);
-
-		//	printf("current bucket size: %d\n", bucket_counts[current]);
-
-		int bucket = 0;
-
-		int start = 0;
-
-		int finish = 0;
-
-		bool start_set = false;
-
-		bool finish_set = false;
-
-		//	printf("i: %d, j: %d, current: %d, start: %d, finish: %d, bucket_start: %d, bucket_finish: %d\n", i, j, current, start, finish, bucket_starts[current],
-		//bucket_finishes[current]);
-
+		
 		if(bucket_starts[current] != -1)
 		{
 
@@ -251,20 +210,6 @@ int * makeRandArray( const int size, const int seed ) {
 
 
 	}//end function
-
-
-int find_max_significant_digit(int * array, int size)
-{
-
-
-
-
-
-
-	return 0;
-
-}//end function
-
 
 void print_array_(int * host_array, int size)
 {
@@ -297,7 +242,7 @@ void check_sorted(int * host_array, int * array, int size)
 
 	}//end for i
 
-//	printf("sorted order\n");
+	printf("sorted order\n");
 
 	for(int i = 0; i <= size - 1; i ++)
 	{
@@ -323,7 +268,7 @@ void check_sorted(int * host_array, int * array, int size)
 
 	}//end for i
 
-//	printf("none missing\n");
+	printf("none missing\n");
 
 }//end function
 
@@ -361,11 +306,6 @@ int main( int argc, char* argv[] ) {
 
 	}//end for i
 
-	//print_array(array, size);
-
-	//printf("host_array\n");
-
-	//print_array(host_array, size);
 
 	cudaEvent_t startTotal, stopTotal; float timeTotal; cudaEventCreate(&startTotal); cudaEventCreate(&stopTotal); cudaEventRecord( startTotal, 0 );
 
@@ -388,16 +328,10 @@ int main( int argc, char* argv[] ) {
 
 	}//end if
 
-	if(total_threads > 48)
-	{
-		//	total_threads = 48;
-	}//end if
 
 	int diameter = sqrt(total_threads) + 1;
 
-	//	printf("estimated threads: %d, diameter: %d\n", total_threads, diameter);
-
-	int number_of_digits = 32;
+	//int number_of_digits = 32;
 
 	int threads_on_a_side = diameter / 100;
 
@@ -408,21 +342,11 @@ int main( int argc, char* argv[] ) {
 
 	}//end if
 
-	//	printf("threads_on_a_side: %d\n", threads_on_a_side);
-
-	//printf("threads per block: %f\n", pow(threads_on_a_side, 2));
-
 	int blocks_on_a_side = (diameter / threads_on_a_side) + 1;
-
-	//	printf("blocks_on_a_side: %d\n", blocks_on_a_side);
-
-
-	//printf("blocks_per_grid: %f\n", pow(blocks_on_a_side, 2));
 
 	int number_of_threads = pow(blocks_on_a_side * threads_on_a_side, 2);
 	int number_of_buckets = number_of_threads;
 
-	//	printf("number of threads: %d, buckets: %d\n", number_of_threads, number_of_buckets);
 
 	dim3 threadsPerBlock(threads_on_a_side, threads_on_a_side);
 
@@ -462,26 +386,16 @@ int main( int argc, char* argv[] ) {
 
 	}//end for i
 
-	//	printf("max: %d\n", max_value);
 
 	for(int i = 0; i <= size - 1; i ++)
 	{
 
 		int bucket = ((double)array[i] / (double)(max_value + 1)) * number_of_buckets;
 
-		//	printf("array[i]: %d, bucket: %d, ", array[i], bucket);
-
-		//	printf("array[i] / max_value: %f, ", (double)array[i] / (double)(max_value + 1)); 
-
 		array_of_buckets[bucket][bucket_counts[bucket]] = array[i]; 
 
-		//	printf("value_in_array: %d, ", array_of_buckets[bucket][bucket_counts[bucket]]);
 
 		bucket_counts[bucket] ++;
-
-		//	printf("bucket count: %d, %d\n", 
-		//				bucket_counts[bucket], 
-		//				array_of_buckets[bucket][bucket_counts[bucket] - 1]);
 
 
 	}//end for i
@@ -522,9 +436,6 @@ int main( int argc, char* argv[] ) {
 
 				bucket_starts[curr_bucket] = iter;
 
-				//			printf("bucket_starts[%d] = %d\n", curr_bucket, iter);
-
-				//	curr_bucket ++;
 
 			}//end if
 
@@ -533,9 +444,7 @@ int main( int argc, char* argv[] ) {
 
 				bucket_finishes[curr_bucket2] = iter;
 
-				//			printf("bucket_finishes[%d] = %d\n", curr_bucket2, iter);
 
-				//curr_bucket2 ++;
 
 
 			}//end if
@@ -558,15 +467,6 @@ int main( int argc, char* argv[] ) {
 
 	}//end for i
 
-	/*
-	   for(int i = 0; i <= iter - 1; i ++)
-	   {
-
-	   printf("%d, ", array_of_buckets_1D[i]);
-
-
-	   }//end for i
-	 */
 
 	int * cuda_array_of_buckets;
 
@@ -600,9 +500,6 @@ int main( int argc, char* argv[] ) {
 
 	cudaFree(cuda_array_of_buckets);
 
-	//	printf("after sort:\n");
-
-	//	print_array(array_of_buckets_1D, iter);
 
 	cudaMemcpy(host_array, cuda_array, size * 4, cudaMemcpyDeviceToHost);
 
@@ -639,7 +536,6 @@ int main( int argc, char* argv[] ) {
 	  end of cuda timer destruction
 	 **********************************/
 
-//		check_sorted(host_array, array, size);
 			
 	if(argc == 3)
 	{
@@ -647,7 +543,8 @@ int main( int argc, char* argv[] ) {
 		std::cerr << "Total time in seconds: " << timeTotal / 1000.0 << std::endl;
 		printSorted = true;
 
-//		check_sorted(host_array, array, size);
+//check_sorted(host_array, array, size);
+
 
 		if( printSorted ){
 

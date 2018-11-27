@@ -17,7 +17,7 @@ do
 
 	ts=$(date +%s%N) ; 
 
-	#./singlethread $i 10 1
+	./singlethread $i 10 1
 				
 	tt_bbp=$((($(date +%s%N) - $ts)/1000000)) ;
 

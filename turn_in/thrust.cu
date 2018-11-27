@@ -91,6 +91,7 @@ int * makeRandArray( const int size, const int seed ) {
 	__global__ void matavgKernel( ) {
 	}
 
+
 int main( int argc, char* argv[] ) {
 	int * array; // the poitner to the array of rands 
 	int size, seed; // values for the size of the array 
@@ -111,15 +112,7 @@ int main( int argc, char* argv[] ) {
 	} {
 		std::stringstream ss1( argv[2] ); 
 		ss1 >> seed; }
-	/*
-	   {
-	   int sortPrint;
-	   std::stringstream ss1( argv[2] ); 
-	   ss1 >> sortPrint;
-	   if( sortPrint == 1 )
-	   printSorted = true;
-	   }
-	 */
+	
 	// get the random numbers
 	array = makeRandArray( size, seed );
 
@@ -133,7 +126,6 @@ int main( int argc, char* argv[] ) {
 	// tabe filename create new tab tabn (tab next) tabp (tab previous)
 
 	thrust::sort(array, array + size);
-
 
 	/***********************************
 	 *
@@ -159,17 +151,6 @@ int main( int argc, char* argv[] ) {
 	
 	if( printSorted ){
 
-/*
-for(int i = 0; i <= size - 1; i ++)
-{
-
-	printf("%d, ", array[i]);
-
-
-}//end for i
-
-std::cout << "\n";
-*/
 		///////////////////////////////////////////////
 		/// Your code to print the sorted array here //
 		///////////////////////////////////////////////

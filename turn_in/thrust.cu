@@ -92,6 +92,66 @@ int * makeRandArray( const int size, const int seed ) {
 	}
 
 
+void print_array(int * array, int size)
+{
+
+
+
+	for(int i = 0; i <= size - 1; i ++)
+	{
+
+		printf("%d, ", array[i]);
+
+	}//end for i
+
+	printf("\n");
+
+
+
+}//end function
+
+void check_sorted(int * host_array, int * array, int size)
+{
+
+	for(int i = 1; i <= size - 1; i ++)
+	{
+
+		//printf("%d >= %d\n", host_array[i], host_array[i - 1]);
+
+		assert(host_array[i] >= host_array[i - 1]); 
+
+	}//end for i
+
+	printf("sorted order\n");
+
+	for(int i = 0; i <= size - 1; i ++)
+	{
+		int missing_number = 1;
+
+		//		printf("checking: %d, ", array[i]);
+
+		for(int j = 0; j <= size - 1; j ++)
+		{
+
+			if(array[i] == host_array[j])
+			{
+
+				//				printf("FOUND\n");
+
+				missing_number = 0;
+
+			}//end if
+
+		}//end for j
+
+		assert(missing_number == 0);
+
+	}//end for i
+
+	printf("none missing\n");
+
+}//end function
+
 int main( int argc, char* argv[] ) {
 	int * array; // the poitner to the array of rands 
 	int size, seed; // values for the size of the array 
@@ -115,6 +175,16 @@ int main( int argc, char* argv[] ) {
 	
 	// get the random numbers
 	array = makeRandArray( size, seed );
+
+
+	int * host_array = (int*)malloc(size * 10);
+
+	for(int i =0; i <= size - 1; i ++)
+	{
+
+		host_array[i] = array[i];
+
+	}//end for i
 
 	cudaEvent_t startTotal, stopTotal; float timeTotal; cudaEventCreate(&startTotal); cudaEventCreate(&stopTotal); cudaEventRecord( startTotal, 0 );
 
@@ -140,7 +210,21 @@ int main( int argc, char* argv[] ) {
 	  end of cuda timer destruction
 	 **********************************/
 	
-	if(argc == 3)
+
+if(argc == 5)
+{
+
+	check_sorted(array, host_array, size);
+
+}//end if
+
+if(argc == 6)
+{
+
+	print_array(array, size);
+
+}//end if
+	if(argc != 4)
 	{
 	
 	std::cerr << "Total time in seconds: "

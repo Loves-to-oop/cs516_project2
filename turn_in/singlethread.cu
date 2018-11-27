@@ -315,29 +315,30 @@ int main( int argc, char* argv[] ) {
 	  end of cuda timer destruction
 	 **********************************/
 	
-	
-if(argc == 3)
+
+if(argc == 5)
+{
+
+	check_sorted(host_array, array, size);
+
+}//end if
+
+if(argc == 6)
+{
+
+	print_array(host_array, size);
+
+}//end if
+
+if(argc != 4)
 {
 	
 	std::cerr << "Total time in seconds: "
 		<< timeTotal / 1000.0 << std::endl;
 	printSorted = true;
 
-
-//check_sorted(host_array, array, size);
-
 	if( printSorted ){
 
-/*
-		for(int i = 0; i <= size - 1; i ++)
-		{
-
-			printf("%d, ", host_array[i]);
-
-		}//end for i
-
-		printf("\n");
-*/
 
 		///////////////////////////////////////////////
 		/// Your code to print the sorted array here //

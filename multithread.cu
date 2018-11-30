@@ -200,7 +200,7 @@ int * makeRandArray( const int size, const int seed ) {
 
 		int current = i + (j * threads_on_a_side);
 
-		
+
 		if(bucket_starts[current] != -1)
 		{
 
@@ -333,7 +333,9 @@ int main( int argc, char* argv[] ) {
 
 	//int number_of_digits = 32;
 
-	int threads_on_a_side = diameter / 100;
+	//int threads_on_a_side = diameter / 100;
+
+	int threads_on_a_side = log10(size);
 
 	if(threads_on_a_side == 0)
 	{
@@ -537,32 +539,53 @@ int main( int argc, char* argv[] ) {
 	 **********************************/
 
 
-if(argc == 5)
-{
+	if(argc == 5)
+	{
 
-	check_sorted(host_array, array, size);
+		check_sorted(host_array, array, size);
 
-}//end if
 
-if(argc == 6)
-{
+	}//end if
 
-	print_array(host_array, size);
+	if(argc == 7)
+	{
 
-}//end if
-			
+
+		printf("estimated threads: %d\n", total_threads);
+
+		printf("estimated diameter: %d\n", diameter);
+
+
+
+		printf("threads on side of block: %d\n", threads_on_a_side);
+
+		printf("blocks on side of grid: %d\n", blocks_on_a_side);
+
+		printf("buckets: %d\n", number_of_buckets);
+
+
+	}//end if 
+
+	if(argc == 6)
+	{
+
+		print_array(host_array, size);
+
+
+	}//end if
+
 	if(argc != 4)
 	{
 
 		std::cerr << "Total time in seconds: " << timeTotal / 1000.0 << std::endl;
 		printSorted = true;
 
-//check_sorted(host_array, array, size);
+		//check_sorted(host_array, array, size);
 
 
 		if( printSorted ){
 
-//			print_array_(host_array, size);
+			//			print_array_(host_array, size);
 
 			///////////////////////////////////////////////
 			/// Your code to print the sorted array here //
